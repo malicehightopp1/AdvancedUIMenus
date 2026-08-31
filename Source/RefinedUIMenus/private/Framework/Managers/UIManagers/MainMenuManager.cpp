@@ -26,13 +26,11 @@ void UMainMenuManager::CreateWidgets()
 	
 	if (MainMenuWidgetClass)
 	{
-		 UE_LOG(LogTemp, Warning, TEXT("Create widget class called"));
 		MainMenuWidget = CreateWidget<UMainMenuWidget>(PlayerController, MainMenuWidgetClass);
 	}
 	if (MainMenuWidget)
 	{
 		MainMenuWidget->AddToViewport();
-		UE_LOG(LogTemp, Warning, TEXT("Main menu widget added to viewport"));
+		UE_LOG(LogTemp, Warning, TEXT("Added to viewport: %d"), MainMenuWidget->IsInViewport());
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Ui creation should be called"));
 }

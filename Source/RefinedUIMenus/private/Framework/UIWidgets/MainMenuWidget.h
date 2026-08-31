@@ -16,9 +16,12 @@ class UMainMenuWidget : public UUserWidget
 	
 	virtual void NativeConstruct();
 	virtual bool Initialize() override;
+	virtual void NativeOnInitialized() override;
 	
 public:
 	UPROPERTY(meta = (BindWidget)) UTextBlock* TestTextBlock; 
 	UPROPERTY(meta = (BindWidget)) UCanvasPanel* CanvasPanel;
 	
+private:
+	UFUNCTION() void ConstructWidget();
 };
