@@ -29,7 +29,7 @@ void AMainMenuPlayerController::BeginPlay()
 	//if theres a manager found init it
 	UMainMenuManager* MenuManager = GameInstance->GetMainMenuManager();
 	
-	if (MenuManager)
+	if (MenuManager) //look into making this to a widget not class
 	{
 		MenuManager->Initialize(this, GameMode->MainMenuWidgetClass);
 	}
