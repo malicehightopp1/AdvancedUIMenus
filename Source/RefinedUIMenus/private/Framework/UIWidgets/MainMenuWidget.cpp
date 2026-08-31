@@ -3,6 +3,8 @@
 
 #include "Framework/UIWidgets/MainMenuWidget.h"
 
+#include "Blueprint/WidgetTree.h"
+#include "Components/CanvasPanel.h"
 #include "Components/TextBlock.h"
 
 void UMainMenuWidget::NativeConstruct()
@@ -11,14 +13,21 @@ void UMainMenuWidget::NativeConstruct()
 	
 	UE_LOG(LogTemp, Warning, TEXT("MainMenuWidget::NativeConstruct()"));
 	
-	if (testTextBlock)
+	CanvasPanel = WidgetTree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass());
+	TestTextBlock = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
+	if (TestTextBlock) //text block is null
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Text set"));
-		testTextBlock->SetText(FText::FromString(TEXT("Test Text"))); //set text
+		TestTextBlock->SetText(FText::FromString(TEXT("Test Text"))); //set text
 	}
+	else 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Text"));
+	}
+	
 }
 
-bool UMainMenuWidget::Initialize()
+bool UMainMenuWidget::Initialize() //this is running but not the text block
 {
 	if (!Super::Initialize())
 	{
@@ -28,12 +37,4 @@ bool UMainMenuWidget::Initialize()
 	UE_LOG(LogTemp, Warning, TEXT("Main menu widget has been init"))
 	
 	return true;
-}
-
-void UMainMenuWidget::InitWidgetData(const FString& InText)
-{
-	if (testTextBlock)
-	{
-		testTextBlock->SetText(FText::FromString(InText));
-	}
 }

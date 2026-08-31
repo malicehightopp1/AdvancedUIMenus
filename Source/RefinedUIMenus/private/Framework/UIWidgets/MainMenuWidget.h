@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "MainMenuWidget.generated.h"
 
+class UCanvasPanel;
 class UTextBlock;
 
 UCLASS()
@@ -13,11 +14,11 @@ class UMainMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-	virtual void NativeConstruct() override;
+	virtual void NativeConstruct();
 	virtual bool Initialize() override;
 	
 public:
-	UPROPERTY(meta = (BindWidget)) UTextBlock* testTextBlock; 
+	UPROPERTY(meta = (BindWidget)) UTextBlock* TestTextBlock; 
+	UPROPERTY(meta = (BindWidget)) UCanvasPanel* CanvasPanel;
 	
-	void InitWidgetData(const FString& InText);
 };
