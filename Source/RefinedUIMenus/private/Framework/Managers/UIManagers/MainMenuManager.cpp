@@ -22,15 +22,25 @@ void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubcla
 
 void UMainMenuManager::CreateWidgets()
 {
-	if (!PlayerController) {return;}
-	
-	if (MainMenuWidgetClass)
+	if (!PlayerController){return;}
+
+	if (!MainMenuWidgetClass)
 	{
-		MainMenuWidget = CreateWidget<UMainMenuWidget>(PlayerController, MainMenuWidgetClass);
+		UE_LOG(LogTemp,Error,TEXT("MainMenuWidgetClass is NOT assigned!"));
+
+		return;
 	}
-	if (MainMenuWidget)
+
+	MainMenuWidget = CreateWidget<UMainMenuWidget>(PlayerController,MainMenuWidgetClass);
+
+	if (!MainMenuWidget)
 	{
-		MainMenuWidget->AddToViewport();
-		UE_LOG(LogTemp, Warning, TEXT("Added to viewport: %d"), MainMenuWidget->IsInViewport());
+		UE_LOG(LogTemp,Error,TEXT("Failed to create MainMenuWidget!"));
+
+		return;
 	}
+
+	MainMenuWidget->AddToViewport();
+
+	UE_LOG(LogTemp, Warning,TEXT("Main Menu Widget created and added to viewport"));
 }

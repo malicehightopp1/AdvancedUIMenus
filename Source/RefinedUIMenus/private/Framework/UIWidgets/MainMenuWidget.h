@@ -6,10 +6,15 @@
 #include "Blueprint/UserWidget.h"
 #include "MainMenuWidget.generated.h"
 
+class USizeBox;
+class UVerticalBox;
+class UBorder;
+class UOverlay;
+class UButton;
 class UCanvasPanel;
 class UTextBlock;
 
-UCLASS()
+UCLASS(Blueprintable)
 class UMainMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
@@ -19,9 +24,13 @@ class UMainMenuWidget : public UUserWidget
 	virtual void NativeOnInitialized() override;
 	
 public:
-	UPROPERTY(meta = (BindWidget)) UTextBlock* TestTextBlock; 
-	UPROPERTY(meta = (BindWidget)) UCanvasPanel* CanvasPanel;
-	
-private:
-	UFUNCTION() void ConstructWidget();
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UTextBlock> TestTextBlock; 
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UCanvasPanel> CanvasPanel;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UVerticalBox> ButtonVerticalBoxHolder;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> StartGameButton;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> SettingsButton;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> QuitButton;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<USizeBox> ButtonSizeBox;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UOverlay> UiHolder;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UBorder> BackgroundBorder;
 };

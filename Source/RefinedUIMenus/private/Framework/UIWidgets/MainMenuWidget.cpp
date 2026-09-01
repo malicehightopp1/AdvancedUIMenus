@@ -12,7 +12,10 @@ void UMainMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	
-	//Dont put construction data here it wont work, bad for performance put all construction in init. 
+	if (TestTextBlock)
+	{
+		TestTextBlock->SetText(FText::FromString(TEXT("TestTextBlock")));
+	}
 }
 
 bool UMainMenuWidget::Initialize() //this is running but not the text block
@@ -29,22 +32,5 @@ void UMainMenuWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	ConstructWidget();
 }
 
-void UMainMenuWidget::ConstructWidget()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Widget construct function has been called"));
-	
-	CanvasPanel = WidgetTree->ConstructWidget<UCanvasPanel>(UCanvasPanel::StaticClass());
-	WidgetTree->RootWidget = CanvasPanel;
-	
-	TestTextBlock = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
-	TestTextBlock->SetText(FText::FromString(TEXT("The text is working all through C++ ;)")));
-	TestTextBlock->SetJustification(ETextJustify::Center);
-	
-	//Setting anchors in canvas panel for specific objects 
-	UCanvasPanelSlot* slot = CanvasPanel->AddChildToCanvas(TestTextBlock);
-	slot->SetAnchors(FAnchors(0.5f, 0.5f));
-	
-}
