@@ -6,6 +6,7 @@
 #include "UObject/Object.h"
 #include "MainMenuManager.generated.h"
 
+class USettingsWidget;
 class UMainMenuWidget;
 UENUM(BlueprintType)
 enum class EMainMenuState : uint8
@@ -24,7 +25,7 @@ class UMainMenuManager : public UObject
 	GENERATED_BODY()
 	
 public:
-	void Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass); //called for init setup
+	void Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass); //called for init setup
 	
 	//UFUNCTION() void OpenMainMenu();
 	UFUNCTION() void StartGame();
@@ -82,8 +83,11 @@ private:
 	// =========================================================
 	
 	UPROPERTY() TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
-	UPROPERTY() TSubclassOf<UMainMenuWidget> SettingsWidgetClass;
 	
 	UPROPERTY() TObjectPtr<UMainMenuWidget> MainMenuWidget;
-	UPROPERTY() TObjectPtr<UMainMenuManager> SettingsWidget;
+	
+	//settings widgets
+	UPROPERTY() TSubclassOf<USettingsWidget> SettingsWidgetClass;
+	
+	UPROPERTY() TObjectPtr<USettingsWidget> SettingsWidget;
 };

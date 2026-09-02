@@ -7,9 +7,8 @@
 #include "ServiceLocatorSubSystem.generated.h"
 
 class UMainMenuManager;
-/**
- * 
- */
+class USettingsManager;
+
 UCLASS()
 class UServiceLocatorSubSystem : public UGameInstanceSubsystem
 {
@@ -22,7 +21,9 @@ public:
 	static UServiceLocatorSubSystem* Get(const UObject* WorldContextObject);
 	
 	UMainMenuManager* GetMainMenuManager() const;
+	USettingsManager* GetSettingsManager() const;
 	
 private:
 	UPROPERTY() TObjectPtr<UMainMenuManager> MainMenuManager; //the service locator owns this reference
+	UPROPERTY() TObjectPtr<USettingsManager> SettingsManager;
 };

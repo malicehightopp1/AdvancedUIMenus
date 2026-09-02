@@ -20,7 +20,7 @@ class UMainMenuWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-	virtual void NativeConstruct();
+	virtual void NativeConstruct() override;
 	virtual bool Initialize() override;
 	virtual void NativeOnInitialized() override;
 	

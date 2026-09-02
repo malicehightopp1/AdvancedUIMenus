@@ -6,6 +6,7 @@
 #include "MainMenuGameMode.generated.h"
 
 class UMainMenuWidget;
+class USettingsWidget;
 
 UCLASS()
 class AMainMenuGameMode : public AGameModeBase
@@ -16,4 +17,5 @@ public:
 	AMainMenuGameMode();
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI") TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI") TSubclassOf<USettingsWidget> SettingsWidgetClass;
 };

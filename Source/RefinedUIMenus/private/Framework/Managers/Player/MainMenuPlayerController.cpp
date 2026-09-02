@@ -6,6 +6,7 @@
 #include "Framework/GameModes/MainMenuGameMode.h"
 #include "Framework/Services/ServiceLocatorSubsystem.h"
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
+#include "Framework/Managers/UIManagers/SettingsManager.h"
 
 void AMainMenuPlayerController::BeginPlay()
 {
@@ -32,5 +33,14 @@ void AMainMenuPlayerController::BeginPlay()
 		return;
 	}
 
-	MenuManager->Initialize( this, GameMode->MainMenuWidgetClass);
+	MenuManager->Initialize( this, GameMode->MainMenuWidgetClass, GameMode->SettingsWidgetClass);
+	
+	USettingsManager* SettingsManager = Services->GetSettingsManager();
+	
+	if (!SettingsManager)
+	{
+		return;
+	}
+	
+	SettingsManager->Initialize(this);
 }

@@ -3,11 +3,13 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Framework/UIWidgets/MainMenuWidget.h"
+#include "Framework/UIWidgets/SettingsWidget.h"
 
-void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass)
+void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass)
 {
 	PlayerController = InPlayerController;
 	MainMenuWidgetClass = InMainMenuWidgetClass;
+	SettingsWidgetClass = InSettingsWidgetClass;
 	
 	UE_LOG(LogTemp, Warning, TEXT("UI Manager was inited"));
 	
@@ -47,11 +49,17 @@ void UMainMenuManager::CreateWidgets()
 
 		return;
 	}
+	if (!SettingsWidgetClass)
+	{
+		UE_LOG(LogTemp,Error,TEXT("SettingsWidgetClass is NOT assigned!"));
 
+		return;
+	}
+
+	//Main Menu widgets
 	MainMenuWidget = CreateWidget<UMainMenuWidget>(PlayerController,MainMenuWidgetClass);
 	
 	MainMenuWidget->SetMainMenuManager(this); //setting reference after creation
-
 	if (!MainMenuWidget)
 	{
 		UE_LOG(LogTemp,Error,TEXT("Failed to create MainMenuWidget!"));
@@ -59,9 +67,20 @@ void UMainMenuManager::CreateWidgets()
 		return;
 	}
 
-	MainMenuWidget->AddToViewport();
+	MainMenuWidget->AddToViewport(0);
 
 	UE_LOG(LogTemp, Warning,TEXT("Main Menu Widget created and added to viewport"));
+
+	//Settings widget
+	SettingsWidget = CreateWidget<USettingsWidget>(PlayerController, SettingsWidgetClass);
+	if (!SettingsWidget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to create SettingsWidget"));
+		
+		return;
+	}
+	SettingsWidget->AddToViewport(1);
+	//SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainMenuManager::SetState(EMainMenuState NewState)
