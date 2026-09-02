@@ -4,9 +4,9 @@
 #include "Framework/UIWidgets/MainMenuWidget.h"
 
 #include "Blueprint/WidgetTree.h"
-#include "Components/CanvasPanel.h"
-#include "Components/CanvasPanelSlot.h"
+#include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Framework/Managers/UIManagers/MainMenuManager.h"
 
 void UMainMenuWidget::NativeConstruct()
 {
@@ -14,7 +14,8 @@ void UMainMenuWidget::NativeConstruct()
 	
 	if (TestTextBlock)
 	{
-		TestTextBlock->SetText(FText::FromString(TEXT("TestTextBlock")));
+		TestTextBlock->SetText(FText::FromString(TEXT("If this is Showing Everything is working!! :)")));
+		TestTextBlock->SetColorAndOpacity(FLinearColor::Yellow);
 	}
 }
 
@@ -32,5 +33,46 @@ void UMainMenuWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
+	if (StartGameButton)
+	{
+		StartGameButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnPlayClicked);
+	}
+	if (SettingsButton)
+	{
+		SettingsButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnSettingsClicked);
+	}
+	if (QuitButton)
+	{
+		QuitButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnQuitClicked);
+	}
+}
+
+void UMainMenuWidget::OnPlayClicked()
+{
+	if (MainMenuManager)
+	{
+		MainMenuManager->StartGame();
+	}
+}
+
+void UMainMenuWidget::OnSettingsClicked()
+{
+	if (MainMenuManager)
+	{
+		MainMenuManager->OpenSettings();
+	}
+}
+
+void UMainMenuWidget::OnQuitClicked()
+{
+	if (MainMenuManager)
+	{
+		MainMenuManager->QuitGame();
+	}
+}
+
+void UMainMenuWidget::SetMainMenuManager(UMainMenuManager* NewMainMenuManager)
+{
+	MainMenuManager = NewMainMenuManager;
 }
 

@@ -10,6 +10,7 @@ class UMainMenuWidget;
 UENUM(BlueprintType)
 enum class EMainMenuState : uint8
 {
+	Playing,
 	Main,
 	Settings,
 	Graphics,
@@ -25,13 +26,13 @@ class UMainMenuManager : public UObject
 public:
 	void Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass); //called for init setup
 	
-	// void OpenMainMenu();
-	// void OpenSettings();
-	// void OpenCredits();
+	//UFUNCTION() void OpenMainMenu();
+	UFUNCTION() void StartGame();
+	UFUNCTION()void OpenSettings();
+	//UFUNCTION()void OpenCredits();
+	UFUNCTION()void QuitGame();
 	// void GoBack();
 	
-	//void StartGame();
-	//void QuitGame();
 	
 	//states
 	//EMainMenuState GetCurrentState() const;
@@ -48,7 +49,8 @@ private:
 	// states
 	// =========================================================
 	
-	//void SetState(EMainMenuState NewState);
+	UFUNCTION() void SetState(EMainMenuState NewState);
+	UFUNCTION() EMainMenuState GetCurrentState() const;
 	
 	EMainMenuState CurrentState = EMainMenuState::Main;
 	EMainMenuState TargetState = EMainMenuState::Main;

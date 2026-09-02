@@ -20,6 +20,23 @@ void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubcla
 	//UpdateInputMode();
 }
 
+void UMainMenuManager::StartGame()
+{
+	UE_LOG(LogTemp,Log,TEXT("Start Clicked"));
+	SetState(EMainMenuState::Playing);
+}
+
+void UMainMenuManager::OpenSettings()
+{
+	UE_LOG(LogTemp,Log,TEXT("Settings Clicked"));
+	SetState(EMainMenuState::Settings);
+}
+
+void UMainMenuManager::QuitGame()
+{
+	UE_LOG(LogTemp,Log,TEXT("Quit Clicked"));
+}
+
 void UMainMenuManager::CreateWidgets()
 {
 	if (!PlayerController){return;}
@@ -32,6 +49,8 @@ void UMainMenuManager::CreateWidgets()
 	}
 
 	MainMenuWidget = CreateWidget<UMainMenuWidget>(PlayerController,MainMenuWidgetClass);
+	
+	MainMenuWidget->SetMainMenuManager(this); //setting reference after creation
 
 	if (!MainMenuWidget)
 	{
@@ -43,4 +62,23 @@ void UMainMenuManager::CreateWidgets()
 	MainMenuWidget->AddToViewport();
 
 	UE_LOG(LogTemp, Warning,TEXT("Main Menu Widget created and added to viewport"));
+}
+
+void UMainMenuManager::SetState(EMainMenuState NewState)
+{
+	if (bIsTransitioning)
+	{
+		return;
+	}
+	if(CurrentState == NewState)
+	{
+		return;
+	}
+	
+	TargetState = NewState;
+}
+
+EMainMenuState UMainMenuManager::GetCurrentState() const
+{
+	return CurrentState;
 }

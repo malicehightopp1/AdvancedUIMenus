@@ -13,6 +13,7 @@ class UOverlay;
 class UButton;
 class UCanvasPanel;
 class UTextBlock;
+class UMainMenuManager;
 
 UCLASS(Blueprintable)
 class UMainMenuWidget : public UUserWidget
@@ -24,6 +25,18 @@ class UMainMenuWidget : public UUserWidget
 	virtual void NativeOnInitialized() override;
 	
 public:
+	//=================================================//
+	//				Functions
+	//=================================================//
+
+	UFUNCTION() void OnPlayClicked();
+	UFUNCTION() void OnSettingsClicked();
+	UFUNCTION() void OnQuitClicked();
+	UFUNCTION() void SetMainMenuManager(UMainMenuManager* NewMainMenuManager);
+	
+	//=================================================//
+	//				Components
+	//=================================================//
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UTextBlock> TestTextBlock; 
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UCanvasPanel> CanvasPanel;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UVerticalBox> ButtonVerticalBoxHolder;
@@ -33,4 +46,10 @@ public:
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<USizeBox> ButtonSizeBox;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UOverlay> UiHolder;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UBorder> BackgroundBorder;
+	
+	//=================================================//
+	//				references
+	//=================================================//
+	
+	UPROPERTY() TObjectPtr<UMainMenuManager> MainMenuManager; 
 };
