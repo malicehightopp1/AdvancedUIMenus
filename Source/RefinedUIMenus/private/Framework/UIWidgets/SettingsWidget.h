@@ -9,6 +9,8 @@
 class USettingsManager;
 class UTextBlock;
 class UCanvasPanel;
+class UOverlay;
+class UBorder;
 
 UCLASS()
 class USettingsWidget : public UUserWidget
@@ -23,4 +25,6 @@ public:
 	
 private:
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UTextBlock> TestingBlock;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UOverlay> ComponentHoldersOverlay;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UBorder> SettingsBackground;
 };

@@ -15,7 +15,7 @@ void USettingsWidget::NativeConstruct()
 	
 	if (TestingBlock)
 	{
-		TestingBlock->SetText(FText::FromString(TEXT("If this is Showing Everything is working!! :)")));
+		TestingBlock->SetText(FText::FromString(TEXT("If this is Showing Settings is working!! :)")));
 		TestingBlock->SetColorAndOpacity(FLinearColor::Red);
 	}
 }

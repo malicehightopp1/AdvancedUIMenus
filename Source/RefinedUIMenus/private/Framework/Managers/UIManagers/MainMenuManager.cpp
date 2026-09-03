@@ -19,24 +19,30 @@ void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubcla
 	CurrentState = EMainMenuState::Main;
 	TargetState = EMainMenuState::Main;
 	
-	//UpdateInputMode();
+	UpdateInputMode();
 }
 
 void UMainMenuManager::StartGame()
 {
 	UE_LOG(LogTemp,Log,TEXT("Start Clicked"));
 	SetState(EMainMenuState::Playing);
+	
+	UpdateInputMode();
 }
 
 void UMainMenuManager::OpenSettings()
 {
 	UE_LOG(LogTemp,Log,TEXT("Settings Clicked"));
 	SetState(EMainMenuState::Settings);
+	SettingsWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UMainMenuManager::QuitGame()
 {
 	UE_LOG(LogTemp,Log,TEXT("Quit Clicked"));
+	
+	//closes the game cleanly allowing things to turn off and close
+	FGenericPlatformMisc::RequestExit(false);
 }
 
 void UMainMenuManager::CreateWidgets()
@@ -80,7 +86,7 @@ void UMainMenuManager::CreateWidgets()
 		return;
 	}
 	SettingsWidget->AddToViewport(1);
-	//SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
+	SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainMenuManager::SetState(EMainMenuState NewState)
@@ -94,10 +100,57 @@ void UMainMenuManager::SetState(EMainMenuState NewState)
 		return;
 	}
 	
-	TargetState = NewState;
+	CurrentState = NewState;
 }
 
 EMainMenuState UMainMenuManager::GetCurrentState() const
 {
 	return CurrentState;
+}
+
+void UMainMenuManager::UpdateInputMode()
+{
+	if (!PlayerController)
+	{
+		return;
+	}
+	if (CurrentState == EMainMenuState::Playing)
+	{
+		SetupGameInputMode();
+		UE_LOG(LogTemp,Warning,TEXT("this is set to playing"));
+	}
+	else
+	{
+		SetupUIInputMode();
+	}
+}
+
+void UMainMenuManager::SetupUIInputMode()
+{
+	UE_LOG(LogTemp,Warning,TEXT("Input mode set to ui"));
+	FInputModeGameAndUI InputMode;
+	
+	if (MainMenuWidget)
+	{
+		InputMode.SetWidgetToFocus(MainMenuWidget->TakeWidget());
+	}
+	else
+	{
+		InputMode.SetWidgetToFocus(nullptr);
+	}
+
+	InputMode.SetHideCursorDuringCapture(false);
+	
+	PlayerController->SetInputMode(InputMode);
+	PlayerController->bShowMouseCursor = true;
+}
+
+void UMainMenuManager::SetupGameInputMode()
+{
+	UE_LOG(LogTemp,Warning,TEXT("Input mode set to Game"));
+
+	FInputModeGameOnly InputMode;
+	
+	PlayerController->SetInputMode(InputMode);
+	PlayerController->bShowMouseCursor = false;
 }

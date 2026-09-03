@@ -50,8 +50,8 @@ private:
 	// states
 	// =========================================================
 	
-	UFUNCTION() void SetState(EMainMenuState NewState);
-	UFUNCTION() EMainMenuState GetCurrentState() const;
+	void SetState(EMainMenuState NewState);
+	EMainMenuState GetCurrentState() const;
 	
 	EMainMenuState CurrentState = EMainMenuState::Main;
 	EMainMenuState TargetState = EMainMenuState::Main;
@@ -69,8 +69,9 @@ private:
 	// Input
 	// =========================================================
 	
-	//void UpdateInputMode();
-	//void SetupUIInputMode();
+	void UpdateInputMode();
+	void SetupUIInputMode();
+	void SetupGameInputMode();
 	
 	// =========================================================
 	// Context
