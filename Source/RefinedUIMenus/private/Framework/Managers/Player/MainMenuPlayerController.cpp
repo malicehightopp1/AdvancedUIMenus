@@ -33,14 +33,14 @@ void AMainMenuPlayerController::BeginPlay()
 		return;
 	}
 
-	MenuManager->Initialize( this, GameMode->MainMenuWidgetClass, GameMode->SettingsWidgetClass);
-	
 	USettingsManager* SettingsManager = Services->GetSettingsManager();
+	
+	MenuManager->Initialize( this, GameMode->MainMenuWidgetClass, GameMode->SettingsWidgetClass);
 	
 	if (!SettingsManager)
 	{
 		return;
 	}
 	
-	SettingsManager->Initialize(this);
+	SettingsManager->Initialize(this, GameMode->SettingsWidgetClass);
 }

@@ -1,7 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
 
+#include "SettingsManager.h"
 #include "Blueprint/UserWidget.h"
+#include "Framework/Services/ServiceLocatorSubSystem.h"
 #include "Framework/UIWidgets/MainMenuWidget.h"
 #include "Framework/UIWidgets/SettingsWidget.h"
 
@@ -11,30 +13,46 @@ void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubcla
 	MainMenuWidgetClass = InMainMenuWidgetClass;
 	SettingsWidgetClass = InSettingsWidgetClass;
 	
-	UE_LOG(LogTemp, Warning, TEXT("UI Manager was inited"));
-	
 	CreateWidgets();
-	//BindWidgetEvents();
+	if (ValidateWidgets() != true)
+	{
+		return;
+	}
 	
 	CurrentState = EMainMenuState::Main;
-	TargetState = EMainMenuState::Main;
+	StateStack.Empty();
 	
-	UpdateInputMode();
+	//Does both input handling and state handling, also sets ui active based on state
+	ApplyState();
+}
+
+bool UMainMenuManager::ValidateWidgets() const
+{
+	if (!PlayerController)
+	{
+		return false;
+	}
+	if (!MainMenuWidget)
+	{
+		return false;
+	}
+	if (!SettingsWidget)
+	{
+		return false;
+	}
+	return true;
 }
 
 void UMainMenuManager::StartGame()
 {
 	UE_LOG(LogTemp,Log,TEXT("Start Clicked"));
 	SetState(EMainMenuState::Playing);
-	
-	UpdateInputMode();
 }
 
 void UMainMenuManager::OpenSettings()
 {
 	UE_LOG(LogTemp,Log,TEXT("Settings Clicked"));
 	SetState(EMainMenuState::Settings);
-	SettingsWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UMainMenuManager::QuitGame()
@@ -43,6 +61,20 @@ void UMainMenuManager::QuitGame()
 	
 	//closes the game cleanly allowing things to turn off and close
 	FGenericPlatformMisc::RequestExit(false);
+}
+
+void UMainMenuManager::GoBack()
+{
+	if (StateStack.IsEmpty())
+	{
+		return;
+	}
+	
+	CurrentState = StateStack.Last();
+	
+	StateStack.Pop();
+	
+	ApplyState();
 }
 
 void UMainMenuManager::CreateWidgets()
@@ -64,14 +96,14 @@ void UMainMenuManager::CreateWidgets()
 
 	//Main Menu widgets
 	MainMenuWidget = CreateWidget<UMainMenuWidget>(PlayerController,MainMenuWidgetClass);
-	
-	MainMenuWidget->SetMainMenuManager(this); //setting reference after creation
+
 	if (!MainMenuWidget)
 	{
 		UE_LOG(LogTemp,Error,TEXT("Failed to create MainMenuWidget!"));
 
 		return;
 	}
+	MainMenuWidget->SetMainMenuManager(this); //setting reference after creation
 
 	MainMenuWidget->AddToViewport(0);
 
@@ -79,12 +111,27 @@ void UMainMenuManager::CreateWidgets()
 
 	//Settings widget
 	SettingsWidget = CreateWidget<USettingsWidget>(PlayerController, SettingsWidgetClass);
+	
 	if (!SettingsWidget)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed to create SettingsWidget"));
 		
 		return;
 	}
+	UServiceLocatorSubSystem* Services = UServiceLocatorSubSystem::Get(PlayerController);
+	
+	if (!Services)
+	{
+		return;
+	}
+	USettingsManager* SettingsManagerRef = Services->GetSettingsManager();
+	
+	if (!SettingsManagerRef)
+	{
+		return;
+	}
+	
+	SettingsWidget->SetSettingsManager(SettingsManagerRef);
 	SettingsWidget->AddToViewport(1);
 	SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
 }
@@ -100,7 +147,40 @@ void UMainMenuManager::SetState(EMainMenuState NewState)
 		return;
 	}
 	
+	//"saving" the previous state
+	StateStack.Add(CurrentState);
+	
 	CurrentState = NewState;
+	
+	ApplyState();
+}
+
+void UMainMenuManager::ApplyState()
+{
+	if (!MainMenuWidget || !SettingsWidget)
+	{
+		return;
+	}
+	
+	switch (CurrentState)
+	{
+	case EMainMenuState::Main:
+		MainMenuWidget->SetVisibility(ESlateVisibility::Visible);
+		SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
+		break;
+	case EMainMenuState::Settings:
+		MainMenuWidget->SetVisibility(ESlateVisibility::Hidden);
+		SettingsWidget->SetVisibility(ESlateVisibility::Visible);
+		break;
+	case EMainMenuState::Playing:
+		MainMenuWidget->SetVisibility(ESlateVisibility::Hidden);
+		SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
+		break;
+		
+	default:
+		break;
+	}
+	UpdateInputMode();
 }
 
 EMainMenuState UMainMenuManager::GetCurrentState() const
@@ -114,14 +194,13 @@ void UMainMenuManager::UpdateInputMode()
 	{
 		return;
 	}
-	if (CurrentState == EMainMenuState::Playing)
-	{
-		SetupGameInputMode();
-		UE_LOG(LogTemp,Warning,TEXT("this is set to playing"));
-	}
-	else
+	if (CurrentState == EMainMenuState::Main || CurrentState == EMainMenuState::Settings || CurrentState == EMainMenuState::Credits)
 	{
 		SetupUIInputMode();
+	}
+	else //if in play mode 
+	{
+		SetupGameInputMode();
 	}
 }
 
@@ -130,13 +209,13 @@ void UMainMenuManager::SetupUIInputMode()
 	UE_LOG(LogTemp,Warning,TEXT("Input mode set to ui"));
 	FInputModeGameAndUI InputMode;
 	
-	if (MainMenuWidget)
+	if (CurrentState == EMainMenuState::Settings && SettingsWidget)
+	{
+		InputMode.SetWidgetToFocus(SettingsWidget->TakeWidget());
+	}
+	else if (MainMenuWidget)
 	{
 		InputMode.SetWidgetToFocus(MainMenuWidget->TakeWidget());
-	}
-	else
-	{
-		InputMode.SetWidgetToFocus(nullptr);
 	}
 
 	InputMode.SetHideCursorDuringCapture(false);

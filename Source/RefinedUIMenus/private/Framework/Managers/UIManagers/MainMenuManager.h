@@ -6,19 +6,20 @@
 #include "UObject/Object.h"
 #include "MainMenuManager.generated.h"
 
+class USettingsManager;
 class USettingsWidget;
 class UMainMenuWidget;
+
+//Main menu states
 UENUM(BlueprintType)
 enum class EMainMenuState : uint8
 {
 	Playing,
 	Main,
 	Settings,
-	Graphics,
-	Audio,
-	Controls,
 	Credits
 };
+
 UCLASS()
 class UMainMenuManager : public UObject
 {
@@ -27,16 +28,13 @@ class UMainMenuManager : public UObject
 public:
 	void Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass); //called for init setup
 	
-	//UFUNCTION() void OpenMainMenu();
+	bool ValidateWidgets() const;
+	
 	UFUNCTION() void StartGame();
 	UFUNCTION()void OpenSettings();
 	//UFUNCTION()void OpenCredits();
 	UFUNCTION()void QuitGame();
-	// void GoBack();
-	
-	
-	//states
-	//EMainMenuState GetCurrentState() const;
+	void GoBack();
 	
 private:
 	// =========================================================
@@ -51,10 +49,11 @@ private:
 	// =========================================================
 	
 	void SetState(EMainMenuState NewState);
+	void ApplyState();
 	EMainMenuState GetCurrentState() const;
 	
 	EMainMenuState CurrentState = EMainMenuState::Main;
-	EMainMenuState TargetState = EMainMenuState::Main;
+	TArray<EMainMenuState> StateStack; //so the back button has a history of what states and menus the player has gone through
 	
 	bool bIsTransitioning = false;
 	
@@ -83,12 +82,12 @@ private:
 	// Widgets
 	// =========================================================
 	
+	//Main menu widgets
 	UPROPERTY() TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
 	
 	UPROPERTY() TObjectPtr<UMainMenuWidget> MainMenuWidget;
 	
 	//settings widgets
 	UPROPERTY() TSubclassOf<USettingsWidget> SettingsWidgetClass;
-	
 	UPROPERTY() TObjectPtr<USettingsWidget> SettingsWidget;
 };
