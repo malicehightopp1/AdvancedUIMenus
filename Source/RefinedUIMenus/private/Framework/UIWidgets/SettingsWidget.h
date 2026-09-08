@@ -17,6 +17,7 @@ class UMainMenuManager;
 class UGraphicsWidget;
 class UAudioWidget;
 class UControlsWidget;
+class UGeneralWidget;
 
 UCLASS()
 class USettingsWidget : public UUserWidget
@@ -38,14 +39,12 @@ public:
 	UFUNCTION() void OnGraphicsClicked();
 	UFUNCTION() void OnAudioClicked();
 	UFUNCTION() void OnControlsClicked();
+	
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UWidgetSwitcher> PanelSwitcher;  //settings manager is using this
 private:
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UTextBlock> TestingBlock;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UOverlay> ComponentHoldersOverlay;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UBorder> SettingsBackground;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> BackButton;
-	
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UWidgetSwitcher> PanelSwitcher; 
-	
 	
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> GeneralButton;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> GraphicsButton;
@@ -55,6 +54,7 @@ private:
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UGraphicsWidget> GraphicsWidget;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UControlsWidget> ControlsWidget;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioWidget> AudioWidget;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UGeneralWidget> GeneralWidget ;
 
 	UPROPERTY() TObjectPtr<USettingsManager> SettingsManager; 
 };

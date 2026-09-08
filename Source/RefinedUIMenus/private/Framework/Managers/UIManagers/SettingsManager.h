@@ -7,7 +7,7 @@
 #include "SettingsManager.generated.h"
 
 class USettingsWidget;
-
+class UMainMenuManager;
 UENUM(BlueprintType)
 enum class ESettingsMenuStates : uint8
 {
@@ -28,6 +28,9 @@ public:
 	// =========================================================
 	void Initialize(APlayerController* InPlayerController, TSubclassOf<USettingsWidget> InSettingsWidget); //called for init setup
 	
+	void SetSettingsWidget(USettingsWidget* InSettingsWidget);
+	void SetMainMenuManager(UMainMenuManager* InMainMenuManager);
+	
 	bool Validate() const;
 	
 	// =========================================================
@@ -39,8 +42,6 @@ public:
 	void OpenControls();
 	
 	void GoBack();
-	
-	void ExittingSettings();
 	
 	// =========================================================
 	// States
@@ -56,6 +57,8 @@ private:
 	UPROPERTY() TSubclassOf<USettingsWidget> SettingsWidgetClass;
 	
 	UPROPERTY() TObjectPtr<USettingsWidget> SettingsWidget;
+	
+	UPROPERTY() UMainMenuManager* MainMenuManager = nullptr;
 	
 	// =========================================================
 	// States

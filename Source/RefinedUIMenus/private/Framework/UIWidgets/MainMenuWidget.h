@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "MainMenuWidget.generated.h"
 
+class UWidgetSwitcher;
 class USizeBox;
 class UVerticalBox;
 class UBorder;
@@ -33,6 +34,8 @@ public:
 	UFUNCTION() void OnSettingsClicked();
 	UFUNCTION() void OnQuitClicked();
 	UFUNCTION() void SetMainMenuManager(UMainMenuManager* NewMainMenuManager);
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
 	
 	//=================================================//
 	//				Components
@@ -46,6 +49,7 @@ public:
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<USizeBox> ButtonSizeBox;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UOverlay> UiHolder;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UBorder> BackgroundBorder;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UWidgetSwitcher> PanelSwitcher;
 	
 	//=================================================//
 	//				references

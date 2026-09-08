@@ -3,8 +3,10 @@
 
 #include "SettingsManager.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/WidgetSwitcher.h"
 #include "Framework/Services/ServiceLocatorSubSystem.h"
 #include "Framework/UIWidgets/MainMenuWidget.h"
+#include "Input/Reply.h"
 #include "Framework/UIWidgets/SettingsWidget.h"
 
 void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass)
@@ -19,7 +21,7 @@ void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubcla
 		return;
 	}
 	
-	CurrentState = EMainMenuState::Main;
+	CurrentState = EMainMenuState::Idle;
 	StateStack.Empty();
 	
 	//Does both input handling and state handling, also sets ui active based on state
@@ -77,6 +79,23 @@ void UMainMenuManager::GoBack()
 	ApplyState();
 }
 
+void UMainMenuManager::OpenMainMenu()
+{
+	UE_LOG(LogTemp,Log,TEXT("Should go straight back to main menu"));
+	CurrentState = EMainMenuState::Main;
+	StateStack.Empty();
+	ApplyState();
+}
+
+void UMainMenuManager::PressAnyKey()
+{
+	if (CurrentState != EMainMenuState::Idle)
+	{
+		return;
+	}
+	SetState(EMainMenuState::Main);
+}
+
 void UMainMenuManager::CreateWidgets()
 {
 	if (!PlayerController){return;}
@@ -103,6 +122,7 @@ void UMainMenuManager::CreateWidgets()
 
 		return;
 	}
+	MainMenuWidget->SetIsFocusable(true);
 	MainMenuWidget->SetMainMenuManager(this); //setting reference after creation
 
 	MainMenuWidget->AddToViewport(0);
@@ -131,7 +151,11 @@ void UMainMenuManager::CreateWidgets()
 		return;
 	}
 	
+	SettingsManagerRef->SetMainMenuManager(this);
+	SettingsManagerRef->SetSettingsWidget(SettingsWidget);
+	
 	SettingsWidget->SetSettingsManager(SettingsManagerRef);
+	
 	SettingsWidget->AddToViewport(1);
 	SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
 }
@@ -164,9 +188,16 @@ void UMainMenuManager::ApplyState()
 	
 	switch (CurrentState)
 	{
+	case 
+		EMainMenuState::Idle:
+		MainMenuWidget->SetVisibility(ESlateVisibility::Visible);
+		SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
+		MainMenuWidget->PanelSwitcher->SetActiveWidgetIndex(0);
+		break;
 	case EMainMenuState::Main:
 		MainMenuWidget->SetVisibility(ESlateVisibility::Visible);
 		SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
+		MainMenuWidget->PanelSwitcher->SetActiveWidgetIndex(1);
 		break;
 	case EMainMenuState::Settings:
 		MainMenuWidget->SetVisibility(ESlateVisibility::Hidden);
@@ -194,7 +225,7 @@ void UMainMenuManager::UpdateInputMode()
 	{
 		return;
 	}
-	if (CurrentState == EMainMenuState::Main || CurrentState == EMainMenuState::Settings || CurrentState == EMainMenuState::Credits)
+	if (CurrentState == EMainMenuState::Main || CurrentState == EMainMenuState::Settings || CurrentState == EMainMenuState::Credits || CurrentState == EMainMenuState::Idle)
 	{
 		SetupUIInputMode();
 	}
@@ -206,20 +237,27 @@ void UMainMenuManager::UpdateInputMode()
 
 void UMainMenuManager::SetupUIInputMode()
 {
-	UE_LOG(LogTemp,Warning,TEXT("Input mode set to ui"));
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Input mode set to UI"));
+
 	FInputModeGameAndUI InputMode;
-	
+
 	if (CurrentState == EMainMenuState::Settings && SettingsWidget)
 	{
 		InputMode.SetWidgetToFocus(SettingsWidget->TakeWidget());
 	}
-	else if (MainMenuWidget)
+	else if ((CurrentState == EMainMenuState::Main ||CurrentState == EMainMenuState::Idle ||CurrentState == EMainMenuState::Credits) && MainMenuWidget)
 	{
+		MainMenuWidget->SetKeyboardFocus();
 		InputMode.SetWidgetToFocus(MainMenuWidget->TakeWidget());
 	}
 
 	InputMode.SetHideCursorDuringCapture(false);
-	
+
 	PlayerController->SetInputMode(InputMode);
 	PlayerController->bShowMouseCursor = true;
 }

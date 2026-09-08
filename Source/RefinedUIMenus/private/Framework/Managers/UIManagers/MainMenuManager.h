@@ -14,6 +14,7 @@ class UMainMenuWidget;
 UENUM(BlueprintType)
 enum class EMainMenuState : uint8
 {
+	Idle,
 	Playing,
 	Main,
 	Settings,
@@ -35,7 +36,9 @@ public:
 	//UFUNCTION()void OpenCredits();
 	UFUNCTION()void QuitGame();
 	void GoBack();
+	void OpenMainMenu();
 	
+	void PressAnyKey();
 private:
 	// =========================================================
 	// Initialization

@@ -11,12 +11,8 @@
 void UMainMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
-	if (TestTextBlock)
-	{
-		TestTextBlock->SetText(FText::FromString(TEXT("If this is Showing Everything is working!! :)")));
-		TestTextBlock->SetColorAndOpacity(FLinearColor::Yellow);
-	}
+		
+	SetIsFocusable(true);
 }
 
 bool UMainMenuWidget::Initialize() //this is running but not the text block
@@ -74,5 +70,16 @@ void UMainMenuWidget::OnQuitClicked()
 void UMainMenuWidget::SetMainMenuManager(UMainMenuManager* NewMainMenuManager)
 {
 	MainMenuManager = NewMainMenuManager;
+}
+
+FReply UMainMenuWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	UE_LOG(LogTemp, Warning, TEXT("MAIN MENU RECEIVED KEY"));
+	if (MainMenuManager)
+	{
+		MainMenuManager->PressAnyKey();
+		return FReply::Handled();
+	}
+	return Super::NativeOnKeyDown(InGeometry,InKeyEvent);
 }
 

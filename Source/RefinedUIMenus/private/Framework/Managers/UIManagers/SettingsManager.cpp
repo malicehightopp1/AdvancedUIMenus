@@ -2,6 +2,9 @@
 
 
 #include "Framework/Managers/UIManagers/SettingsManager.h"
+
+#include "MainMenuManager.h"
+#include "Components/WidgetSwitcher.h"
 #include "Framework/UIWidgets/SettingsWidget.h"
 
 void USettingsManager::Initialize(APlayerController* InPlayerController, TSubclassOf<USettingsWidget> InSettingsWidget)
@@ -9,14 +12,29 @@ void USettingsManager::Initialize(APlayerController* InPlayerController, TSubcla
 	PlayerController = InPlayerController;
 	SettingsWidgetClass = InSettingsWidget;
 	
-	CurrentState = ESettingsMenuStates::General;
-	StateStack.Empty();
-	
 	if (!Validate())
 	{
 		return;
 	}
-	ApplyState();		
+	CurrentState = ESettingsMenuStates::General;
+	StateStack.Empty();
+}
+
+void USettingsManager::SetSettingsWidget(USettingsWidget* InSettingsWidget)
+{
+	SettingsWidget = InSettingsWidget;
+	if (!SettingsWidget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Settings Widget in SettingsManager its null"));
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Settings Widget"));
+	ApplyState();
+}
+
+void USettingsManager::SetMainMenuManager(UMainMenuManager* InMainMenuManager)
+{
+	MainMenuManager = InMainMenuManager;
 }
 
 bool USettingsManager::Validate() const
@@ -60,22 +78,14 @@ void USettingsManager::OpenControls()
 
 void USettingsManager::GoBack()
 {
-	if (!StateStack.IsEmpty())
+	UE_LOG(LogTemp, Warning, TEXT("Exitting Settings"));
+	
+	if (!MainMenuManager)
 	{
-		CurrentState = StateStack.Last();
-		
-		StateStack.Pop();
-		
-		ApplyState();
-		
+		UE_LOG(LogTemp, Warning, TEXT("No main menu ref"));
 		return;
 	}
-	ExittingSettings();
-}
-
-void USettingsManager::ExittingSettings()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Exitting Settings"));
+	MainMenuManager->OpenMainMenu();
 }
 
 ESettingsMenuStates USettingsManager::GetCurrentState() const
@@ -89,7 +99,7 @@ void USettingsManager::SetState(ESettingsMenuStates NewState)
 	{
 		return;
 	}
-	StateStack.Add(NewState);
+	StateStack.Add(CurrentState);
 	
 	CurrentState = NewState;
 	
@@ -101,6 +111,26 @@ void USettingsManager::ApplyState()
 	if (!SettingsWidget)
 	{
 		return;
+	}
+	
+	UE_LOG(LogTemp, Warning, TEXT("Applying Settings"));
+	switch (CurrentState)
+	{
+		case ESettingsMenuStates::General:
+			SettingsWidget->PanelSwitcher->SetActiveWidgetIndex(0);
+		break;
+		case ESettingsMenuStates::Graphics:
+			SettingsWidget->PanelSwitcher->SetActiveWidgetIndex(1);
+		break;
+		case ESettingsMenuStates::Audio:
+			SettingsWidget->PanelSwitcher->SetActiveWidgetIndex(2);
+		break;
+		case ESettingsMenuStates::Controls:
+			SettingsWidget->PanelSwitcher->SetActiveWidgetIndex(3);
+		break;
+		
+		default:
+			break;
 	}
 }
 
