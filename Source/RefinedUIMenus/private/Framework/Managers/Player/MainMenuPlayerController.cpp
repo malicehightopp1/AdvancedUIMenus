@@ -6,6 +6,8 @@
 #include "Framework/GameModes/MainMenuGameMode.h"
 #include "Framework/Services/ServiceLocatorSubsystem.h"
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
+#include "InputCoreTypes.h"
+#include "AI/NavigationSystemBase.h"
 #include "Framework/Managers/UIManagers/SettingsManager.h"
 
 void AMainMenuPlayerController::BeginPlay()
@@ -43,4 +45,25 @@ void AMainMenuPlayerController::BeginPlay()
 	}
 	
 	SettingsManager->Initialize(this, GameMode->SettingsWidgetClass);
+}
+
+void AMainMenuPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+	
+	InputComponent->BindKey(EKeys::AnyKey, IE_Pressed, this, &AMainMenuPlayerController::HandleAnyKey);
+}
+
+void AMainMenuPlayerController::HandleAnyKey()
+{
+	UServiceLocatorSubSystem* Services = UServiceLocatorSubSystem::Get(this);
+	if (!Services)
+	{
+		return;
+	}
+	UMainMenuManager* MenuManager = Services->GetMainMenuManager();
+	if (MenuManager)
+	{
+		MenuManager->PressAnyKey();
+	}
 }

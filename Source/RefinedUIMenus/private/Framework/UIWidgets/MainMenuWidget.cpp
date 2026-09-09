@@ -71,15 +71,3 @@ void UMainMenuWidget::SetMainMenuManager(UMainMenuManager* NewMainMenuManager)
 {
 	MainMenuManager = NewMainMenuManager;
 }
-
-FReply UMainMenuWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
-{
-	UE_LOG(LogTemp, Warning, TEXT("MAIN MENU RECEIVED KEY"));
-	if (MainMenuManager)
-	{
-		MainMenuManager->PressAnyKey();
-		return FReply::Handled();
-	}
-	return Super::NativeOnKeyDown(InGeometry,InKeyEvent);
-}
-

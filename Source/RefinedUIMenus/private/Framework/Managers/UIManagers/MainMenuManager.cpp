@@ -4,6 +4,7 @@
 #include "SettingsManager.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/WidgetSwitcher.h"
+#include "Components/Widget.h"
 #include "Framework/Services/ServiceLocatorSubSystem.h"
 #include "Framework/UIWidgets/MainMenuWidget.h"
 #include "Input/Reply.h"
@@ -250,16 +251,21 @@ void UMainMenuManager::SetupUIInputMode()
 	{
 		InputMode.SetWidgetToFocus(SettingsWidget->TakeWidget());
 	}
-	else if ((CurrentState == EMainMenuState::Main ||CurrentState == EMainMenuState::Idle ||CurrentState == EMainMenuState::Credits) && MainMenuWidget)
+	else if (MainMenuWidget)
 	{
-		MainMenuWidget->SetKeyboardFocus();
 		InputMode.SetWidgetToFocus(MainMenuWidget->TakeWidget());
 	}
 
 	InputMode.SetHideCursorDuringCapture(false);
-
+	
 	PlayerController->SetInputMode(InputMode);
 	PlayerController->bShowMouseCursor = true;
+	
+	if (CurrentState == EMainMenuState::Idle || CurrentState == EMainMenuState::Main)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Input mode set to Idle"));
+		MainMenuWidget->SetKeyboardFocus();
+	}
 }
 
 void UMainMenuManager::SetupGameInputMode()

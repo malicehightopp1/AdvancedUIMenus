@@ -34,7 +34,7 @@ public:
 	UFUNCTION() void OnSettingsClicked();
 	UFUNCTION() void OnQuitClicked();
 	UFUNCTION() void SetMainMenuManager(UMainMenuManager* NewMainMenuManager);
-	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+	
 
 	
 	//=================================================//

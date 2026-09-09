@@ -12,4 +12,7 @@ class AMainMenuPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 	virtual void BeginPlay() override;
+	
+	virtual void SetupInputComponent() override;
+	void HandleAnyKey();
 };
