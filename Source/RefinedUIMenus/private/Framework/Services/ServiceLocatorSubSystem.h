@@ -6,6 +6,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "ServiceLocatorSubSystem.generated.h"
 
+class AMainMenuCamera;
 class UMainMenuManager;
 class USettingsManager;
 

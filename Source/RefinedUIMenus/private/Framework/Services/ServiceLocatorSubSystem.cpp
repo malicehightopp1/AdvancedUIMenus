@@ -3,6 +3,7 @@
 
 #include "Framework/Services/ServiceLocatorSubSystem.h"
 
+#include "Framework/Managers/Player/PlayerCamera/MainMenuCamera.h"
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
 #include "Framework/Managers/UIManagers/SettingsManager.h"
 
@@ -55,4 +56,5 @@ USettingsManager* UServiceLocatorSubSystem::GetSettingsManager() const
 {
 	return SettingsManager;
 }
+
 #pragma endregion Getters

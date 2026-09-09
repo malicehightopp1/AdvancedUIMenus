@@ -5,6 +5,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "MainMenuGameMode.generated.h"
 
+class AMainMenuCamera;
 class UMainMenuWidget;
 class USettingsWidget;
 
@@ -18,4 +19,5 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI") TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI") TSubclassOf<USettingsWidget> SettingsWidgetClass;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI") TObjectPtr<AMainMenuCamera> MainMenuCamera;
 };

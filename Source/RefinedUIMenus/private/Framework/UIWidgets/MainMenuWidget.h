@@ -33,24 +33,29 @@ public:
 	UFUNCTION() void OnPlayClicked();
 	UFUNCTION() void OnSettingsClicked();
 	UFUNCTION() void OnQuitClicked();
+	UFUNCTION() void OnCreditsClicked();
 	UFUNCTION() void SetMainMenuManager(UMainMenuManager* NewMainMenuManager);
-	
-
 	
 	//=================================================//
 	//				Components
 	//=================================================//
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UTextBlock> TestTextBlock; 
+
+	//Root
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UCanvasPanel> CanvasPanel;
+	
+	//Holders
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UVerticalBox> ButtonVerticalBoxHolder;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<USizeBox> ButtonSizeBox;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UOverlay> UiHolder;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UWidgetSwitcher> PanelSwitcher;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UBorder> BackgroundBorder;
+
+	//Buttons
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> StartGameButton;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> SettingsButton;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> QuitButton;
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<USizeBox> ButtonSizeBox;
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UOverlay> UiHolder;
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UBorder> BackgroundBorder;
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UWidgetSwitcher> PanelSwitcher;
-	
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> CreditsButton;
+
 	//=================================================//
 	//				references
 	//=================================================//

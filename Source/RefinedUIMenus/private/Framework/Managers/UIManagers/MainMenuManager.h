@@ -9,6 +9,7 @@
 class USettingsManager;
 class USettingsWidget;
 class UMainMenuWidget;
+class AMainMenuCamera;
 
 //Main menu states
 UENUM(BlueprintType)
@@ -27,18 +28,22 @@ class UMainMenuManager : public UObject
 	GENERATED_BODY()
 	
 public:
-	void Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass); //called for init setup
+	UFUNCTION() void OnCameraTransitionFinished();
+	void Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass, AMainMenuCamera* InMainMenuCamera); //called for init setup
 	
 	bool ValidateWidgets() const;
 	
 	UFUNCTION() void StartGame();
 	UFUNCTION()void OpenSettings();
-	//UFUNCTION()void OpenCredits();
+	UFUNCTION()void OpenCredits();
 	UFUNCTION()void QuitGame();
+	
 	void GoBack();
 	void OpenMainMenu();
-	
 	void PressAnyKey();
+	
+	void TransitionCamera(EMainMenuState NewState);
+	
 private:
 	// =========================================================
 	// Initialization
@@ -60,13 +65,6 @@ private:
 	bool bIsTransitioning = false;
 	
 	// =========================================================
-	// transitions
-	// =========================================================
-	
-	//void BeginTransition();
-	//void EndTransition();
-	
-	// =========================================================
 	// Input
 	// =========================================================
 	
@@ -79,6 +77,7 @@ private:
 	// =========================================================
 	
 	UPROPERTY() TObjectPtr<APlayerController> PlayerController;
+	UPROPERTY() TObjectPtr<AMainMenuCamera> MainMenuCamera; //actor
 	
 	// =========================================================
 	// Widgets

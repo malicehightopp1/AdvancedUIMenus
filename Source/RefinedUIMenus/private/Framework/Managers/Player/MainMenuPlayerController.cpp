@@ -9,11 +9,23 @@
 #include "InputCoreTypes.h"
 #include "AI/NavigationSystemBase.h"
 #include "Framework/Managers/UIManagers/SettingsManager.h"
+#include "Kismet/GameplayStatics.h"
+#include "PlayerCamera/MainMenuCamera.h"
 
 void AMainMenuPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	AMainMenuCamera* MainMenuCamera = Cast<AMainMenuCamera>(UGameplayStatics::GetActorOfClass(GetWorld(),AMainMenuCamera::StaticClass()));
+
+	if (!MainMenuCamera)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Main Menu Camera was not found!"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Main Menu Camera found: %s"),
+		*MainMenuCamera->GetName());
 	UServiceLocatorSubSystem* Services = UServiceLocatorSubSystem::Get(this);
 
 	if (!Services)
@@ -37,7 +49,7 @@ void AMainMenuPlayerController::BeginPlay()
 
 	USettingsManager* SettingsManager = Services->GetSettingsManager();
 	
-	MenuManager->Initialize( this, GameMode->MainMenuWidgetClass, GameMode->SettingsWidgetClass);
+	MenuManager->Initialize( this, GameMode->MainMenuWidgetClass, GameMode->SettingsWidgetClass, MainMenuCamera);
 	
 	if (!SettingsManager)
 	{
@@ -45,6 +57,7 @@ void AMainMenuPlayerController::BeginPlay()
 	}
 	
 	SettingsManager->Initialize(this, GameMode->SettingsWidgetClass);
+	
 }
 
 void AMainMenuPlayerController::SetupInputComponent()
@@ -54,6 +67,7 @@ void AMainMenuPlayerController::SetupInputComponent()
 	InputComponent->BindKey(EKeys::AnyKey, IE_Pressed, this, &AMainMenuPlayerController::HandleAnyKey);
 }
 
+//for begin idle state
 void AMainMenuPlayerController::HandleAnyKey()
 {
 	UServiceLocatorSubSystem* Services = UServiceLocatorSubSystem::Get(this);

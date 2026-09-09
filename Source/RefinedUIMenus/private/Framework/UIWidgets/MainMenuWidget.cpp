@@ -5,7 +5,6 @@
 
 #include "Blueprint/WidgetTree.h"
 #include "Components/Button.h"
-#include "Components/TextBlock.h"
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
 
 void UMainMenuWidget::NativeConstruct()
@@ -41,6 +40,10 @@ void UMainMenuWidget::NativeOnInitialized()
 	{
 		QuitButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnQuitClicked);
 	}
+	if (CreditsButton)
+	{
+		CreditsButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnCreditsClicked);
+	}
 }
 
 void UMainMenuWidget::OnPlayClicked()
@@ -64,6 +67,14 @@ void UMainMenuWidget::OnQuitClicked()
 	if (MainMenuManager)
 	{
 		MainMenuManager->QuitGame();
+	}
+}
+
+void UMainMenuWidget::OnCreditsClicked()
+{
+	if (MainMenuManager)
+	{
+		MainMenuManager->OpenCredits();
 	}
 }
 

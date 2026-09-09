@@ -5,16 +5,26 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/Widget.h"
+#include "Framework/Managers/Player/PlayerCamera/MainMenuCamera.h"
 #include "Framework/Services/ServiceLocatorSubSystem.h"
 #include "Framework/UIWidgets/MainMenuWidget.h"
 #include "Input/Reply.h"
 #include "Framework/UIWidgets/SettingsWidget.h"
+#include "Kismet/KismetSystemLibrary.h"
 
-void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass)
+#pragma region Initial Setup functions
+
+void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass, AMainMenuCamera* InMainMenuCamera)
 {
 	PlayerController = InPlayerController;
 	MainMenuWidgetClass = InMainMenuWidgetClass;
 	SettingsWidgetClass = InSettingsWidgetClass;
+	
+	MainMenuCamera = InMainMenuCamera;
+	if (MainMenuCamera)
+	{
+		MainMenuCamera->OnCameraTransitionFinished.AddDynamic(this, &UMainMenuManager::OnCameraTransitionFinished);
+	}
 	
 	CreateWidgets();
 	if (ValidateWidgets() != true)
@@ -22,9 +32,11 @@ void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubcla
 		return;
 	}
 	
+	PlayerController->SetViewTarget(MainMenuCamera);
+
 	CurrentState = EMainMenuState::Idle;
 	StateStack.Empty();
-	
+
 	//Does both input handling and state handling, also sets ui active based on state
 	ApplyState();
 }
@@ -44,57 +56,6 @@ bool UMainMenuManager::ValidateWidgets() const
 		return false;
 	}
 	return true;
-}
-
-void UMainMenuManager::StartGame()
-{
-	UE_LOG(LogTemp,Log,TEXT("Start Clicked"));
-	SetState(EMainMenuState::Playing);
-}
-
-void UMainMenuManager::OpenSettings()
-{
-	UE_LOG(LogTemp,Log,TEXT("Settings Clicked"));
-	SetState(EMainMenuState::Settings);
-}
-
-void UMainMenuManager::QuitGame()
-{
-	UE_LOG(LogTemp,Log,TEXT("Quit Clicked"));
-	
-	//closes the game cleanly allowing things to turn off and close
-	FGenericPlatformMisc::RequestExit(false);
-}
-
-void UMainMenuManager::GoBack()
-{
-	if (StateStack.IsEmpty())
-	{
-		return;
-	}
-	
-	CurrentState = StateStack.Last();
-	
-	StateStack.Pop();
-	
-	ApplyState();
-}
-
-void UMainMenuManager::OpenMainMenu()
-{
-	UE_LOG(LogTemp,Log,TEXT("Should go straight back to main menu"));
-	CurrentState = EMainMenuState::Main;
-	StateStack.Empty();
-	ApplyState();
-}
-
-void UMainMenuManager::PressAnyKey()
-{
-	if (CurrentState != EMainMenuState::Idle)
-	{
-		return;
-	}
-	SetState(EMainMenuState::Main);
 }
 
 void UMainMenuManager::CreateWidgets()
@@ -161,23 +122,161 @@ void UMainMenuManager::CreateWidgets()
 	SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UMainMenuManager::SetState(EMainMenuState NewState)
+#pragma endregion
+
+#pragma region Widget Button Functions 
+
+void UMainMenuManager::StartGame()
+{
+	UE_LOG(LogTemp,Log,TEXT("Start Clicked"));
+	SetState(EMainMenuState::Playing);
+}
+
+void UMainMenuManager::OpenSettings()
+{
+	UE_LOG(LogTemp,Log,TEXT("Settings Clicked"));
+	SetState(EMainMenuState::Settings);
+}
+
+void UMainMenuManager::OpenCredits()
+{
+	UE_LOG(LogTemp,Log,TEXT("Credits Clicked"));
+	SetState(EMainMenuState::Credits);
+}
+
+void UMainMenuManager::QuitGame()
+{
+	UE_LOG(LogTemp,Log,TEXT("Quit Clicked"));
+	
+	UKismetSystemLibrary::QuitGame(GetWorld(), PlayerController, EQuitPreference::Quit, true);
+}
+
+void UMainMenuManager::GoBack()
 {
 	if (bIsTransitioning)
 	{
 		return;
 	}
+	if (StateStack.IsEmpty())
+	{
+		return;
+	}
+	EMainMenuState PreviousState = StateStack.Last();
+	
+	StateStack.Pop();
+
+	CurrentState = PreviousState;
+	
+	bIsTransitioning = true;
+
+	TransitionCamera(CurrentState);
+}
+
+
+#pragma endregion
+
+void UMainMenuManager::OpenMainMenu()
+{
+	UE_LOG(LogTemp,Log,TEXT("Should go straight back to main menu"));
+	
+	StateStack.Empty();
+	
+	SetState(EMainMenuState::Main);
+}
+
+void UMainMenuManager::PressAnyKey()
+{
+	if (CurrentState != EMainMenuState::Idle)
+	{
+		return;
+	}
+	SetState(EMainMenuState::Main);
+}
+
+void UMainMenuManager::TransitionCamera(EMainMenuState NewState)
+{
+	if (!MainMenuCamera)
+	{
+		bIsTransitioning = false;
+		ApplyState();
+		return;
+	}
+
+
+	switch (NewState)
+	{
+	case EMainMenuState::Idle:
+		
+		MainMenuCamera->MoveToTransform(
+			MainMenuCamera->IdleLocation,
+			MainMenuCamera->IdleRotation
+		);
+
+		break;
+
+	case EMainMenuState::Main:
+
+		MainMenuCamera->MoveToTransform(
+			MainMenuCamera->MainMenuLocation,
+			MainMenuCamera->MainMenuRotation
+		);
+
+		break;
+
+	case EMainMenuState::Settings:
+
+		MainMenuCamera->MoveToTransform(
+			MainMenuCamera->SettingsLocation,
+			MainMenuCamera->SettingsRotation
+		);
+
+		break;
+
+	case EMainMenuState::Credits:
+
+		MainMenuCamera->MoveToTransform(
+			MainMenuCamera->CreditsLocation,
+			MainMenuCamera->CreditsRotation
+		);
+
+		break;
+
+	default:
+		
+		bIsTransitioning = false;
+		ApplyState();
+		
+		break;
+	}
+}
+
+void UMainMenuManager::OnCameraTransitionFinished()
+{
+	bIsTransitioning = false;
+	
+	ApplyState();
+}
+
+#pragma region State Management
+void UMainMenuManager::SetState(EMainMenuState NewState)
+{
 	if(CurrentState == NewState)
 	{
 		return;
 	}
-	
+	if (bIsTransitioning)
+	{
+		return;
+	}
+
 	//"saving" the previous state
 	StateStack.Add(CurrentState);
 	
 	CurrentState = NewState;
 	
-	ApplyState();
+	bIsTransitioning = true;
+	
+	TransitionCamera(NewState);
 }
 
 void UMainMenuManager::ApplyState()
@@ -219,7 +318,9 @@ EMainMenuState UMainMenuManager::GetCurrentState() const
 {
 	return CurrentState;
 }
+#pragma endregion
 
+#pragma region Input Management
 void UMainMenuManager::UpdateInputMode()
 {
 	if (!PlayerController)
@@ -277,3 +378,4 @@ void UMainMenuManager::SetupGameInputMode()
 	PlayerController->SetInputMode(InputMode);
 	PlayerController->bShowMouseCursor = false;
 }
+#pragma endregion
