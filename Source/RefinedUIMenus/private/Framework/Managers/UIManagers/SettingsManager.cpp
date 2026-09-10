@@ -2,7 +2,6 @@
 
 
 #include "Framework/Managers/UIManagers/SettingsManager.h"
-
 #include "MainMenuManager.h"
 #include "Components/WidgetSwitcher.h"
 #include "Framework/UIWidgets/SettingsWidget.h"
@@ -86,6 +85,19 @@ void USettingsManager::GoBack()
 		return;
 	}
 	MainMenuManager->OpenMainMenu();
+}
+
+void USettingsManager::MasterVolumeChanged(float Volume)
+{
+	MasterVolume = Volume;
+	
+	UE_LOG(LogTemp, Warning, TEXT("Master Volume Changed"));
+}
+
+void USettingsManager::SFXVolumeChanged(float Volume)
+{
+	SFXVolume = Volume;
+	UE_LOG(LogTemp, Warning, TEXT("SFX Volume Changed"));
 }
 
 ESettingsMenuStates USettingsManager::GetCurrentState() const

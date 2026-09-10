@@ -44,6 +44,13 @@ public:
 	void GoBack();
 	
 	// =========================================================
+	// Functionailty of panels
+	// =========================================================
+	
+	void MasterVolumeChanged(float Volume);
+	void SFXVolumeChanged(float Volume);
+	
+	// =========================================================
 	// States
 	// =========================================================
 	ESettingsMenuStates GetCurrentState() const;
@@ -69,5 +76,12 @@ private:
 	
 	ESettingsMenuStates CurrentState = ESettingsMenuStates::General;
 	TArray<ESettingsMenuStates> StateStack;
+private:
+	// =========================================================
+	// Audio Values
+	// =========================================================
+	
+	float MasterVolume = 1.0f;
+	float SFXVolume = 1.0f;
 };
 
