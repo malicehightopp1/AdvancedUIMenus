@@ -172,9 +172,6 @@ void UMainMenuManager::GoBack()
 	TransitionCamera(CurrentState);
 }
 
-
-#pragma endregion
-
 void UMainMenuManager::OpenMainMenu()
 {
 	UE_LOG(LogTemp,Log,TEXT("Should go straight back to main menu"));
@@ -192,7 +189,9 @@ void UMainMenuManager::PressAnyKey()
 	}
 	SetState(EMainMenuState::Main);
 }
+#pragma endregion
 
+#pragma region Transition Managing
 void UMainMenuManager::TransitionCamera(EMainMenuState NewState)
 {
 	if (!MainMenuCamera)
@@ -256,6 +255,7 @@ void UMainMenuManager::OnCameraTransitionFinished()
 	
 	ApplyState();
 }
+#pragma endregion
 
 #pragma region State Management
 void UMainMenuManager::SetState(EMainMenuState NewState)
