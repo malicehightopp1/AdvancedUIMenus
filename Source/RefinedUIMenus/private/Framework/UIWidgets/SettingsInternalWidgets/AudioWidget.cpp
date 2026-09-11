@@ -11,14 +11,22 @@ void UAudioWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	
+
 	if (MasterVolumeSlider)
 	{
+		MasterVolumeSlider->SetValue(StartingValue);
+
 		MasterVolumeSlider->OnValueChanged.AddDynamic(this, &UAudioWidget::OnMasterVolumeChanged);
+
 		OnMasterVolumeChanged(StartingValue);
 	}
+
 	if (SFXVolumeSlider)
 	{
-		SFXVolumeSlider->OnValueChanged.AddDynamic(this, &UAudioWidget::OnSFXVolumeChanged);
+		SFXVolumeSlider->SetValue(StartingValue);
+
+		SFXVolumeSlider->OnValueChanged.AddDynamic(this,&UAudioWidget::OnSFXVolumeChanged);
+
 		OnSFXVolumeChanged(StartingValue);
 	}
 }
@@ -32,7 +40,7 @@ void UAudioWidget::OnMasterVolumeChanged(float Value)
 	if (MasterVolumeTextBlock)
 	{
 		int32 VolumePercent = FMath::RoundToInt(Value * 100.0f);
-		MasterVolumeTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Master Volume: %.d%%"), VolumePercent)));
+		MasterVolumeTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Master Volume: %d%%"), VolumePercent)));
 	}
 }
 
@@ -45,7 +53,7 @@ void UAudioWidget::OnSFXVolumeChanged(float Value)
 	if (SFXVolumeTextBlock)
 	{
 		int32 VolumePercent = FMath::RoundToInt(Value * 100.0f);
-		SFXVolumeTextBlock->SetText(FText::FromString(FString::Printf(TEXT("SFX Volume: %.d%%"), VolumePercent)));
+		SFXVolumeTextBlock->SetText(FText::FromString(FString::Printf(TEXT("SFX Volume: %d%%"), VolumePercent)));
 	}
 }
 

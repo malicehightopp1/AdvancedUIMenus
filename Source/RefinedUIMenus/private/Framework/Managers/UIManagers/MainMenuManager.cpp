@@ -10,26 +10,34 @@
 #include "Framework/UIWidgets/MainMenuWidget.h"
 #include "Input/Reply.h"
 #include "Framework/UIWidgets/SettingsWidget.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+
+class USoundBase;
 
 #pragma region Initial Setup functions
 
-void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass, AMainMenuCamera* InMainMenuCamera)
+void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass, AMainMenuCamera* InMainMenuCamera,USoundBase* InMainMenuMusic)
 {
 	PlayerController = InPlayerController;
 	MainMenuWidgetClass = InMainMenuWidgetClass;
 	SettingsWidgetClass = InSettingsWidgetClass;
+	MainMenuMusic = InMainMenuMusic;
 	
 	MainMenuCamera = InMainMenuCamera;
 	if (MainMenuCamera)
 	{
 		MainMenuCamera->OnCameraTransitionFinished.AddDynamic(this, &UMainMenuManager::OnCameraTransitionFinished);
 	}
-	
 	CreateWidgets();
 	if (ValidateWidgets() != true)
 	{
 		return;
+	}
+	if (MainMenuMusic)
+	{
+		UGameplayStatics::PlaySound2D(this, MainMenuMusic);
+		UE_LOG(LogTemp,Log,TEXT("Sound worked"));
 	}
 	
 	PlayerController->SetViewTarget(MainMenuCamera);

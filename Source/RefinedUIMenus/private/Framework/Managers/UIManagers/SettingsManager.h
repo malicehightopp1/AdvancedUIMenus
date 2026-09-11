@@ -8,6 +8,9 @@
 
 class USettingsWidget;
 class UMainMenuManager;
+class USoundClass;
+class USoundMix;
+
 UENUM(BlueprintType)
 enum class ESettingsMenuStates : uint8
 {
@@ -26,7 +29,7 @@ public:
 	// =========================================================
 	// Initialization
 	// =========================================================
-	void Initialize(APlayerController* InPlayerController, TSubclassOf<USettingsWidget> InSettingsWidget); //called for init setup
+	void Initialize(APlayerController* InPlayerController,TSubclassOf<USettingsWidget> InSettingsWidget,USoundClass* InMasterSoundClass,USoundClass* InMusicSoundClass,USoundClass* InSFXSoundClass,USoundMix* InSettingsSoundMix);
 	
 	void SetSettingsWidget(USettingsWidget* InSettingsWidget);
 	void SetMainMenuManager(UMainMenuManager* InMainMenuManager);
@@ -76,12 +79,23 @@ private:
 	
 	ESettingsMenuStates CurrentState = ESettingsMenuStates::General;
 	TArray<ESettingsMenuStates> StateStack;
-private:
+	
 	// =========================================================
 	// Audio Values
 	// =========================================================
 	
 	float MasterVolume = 1.0f;
 	float SFXVolume = 1.0f;
+	
+protected:
+	// =========================================================
+	// Audio Reference
+	// =========================================================
+	
+	UPROPERTY() TObjectPtr<USoundClass> MasterSoundClass;
+	UPROPERTY() TObjectPtr<USoundClass> MusicSoundClass;
+	UPROPERTY() TObjectPtr<USoundClass> SFXSoundClass;
+	UPROPERTY() TObjectPtr<USoundMix> SettingsSoundMix;
 };
+
 

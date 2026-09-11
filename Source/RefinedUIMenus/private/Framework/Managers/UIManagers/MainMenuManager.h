@@ -29,7 +29,7 @@ class UMainMenuManager : public UObject
 	
 public:
 	UFUNCTION() void OnCameraTransitionFinished();
-	void Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass, AMainMenuCamera* InMainMenuCamera); //called for init setup
+	void Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass, AMainMenuCamera* InMainMenuCamera, USoundBase* InMainMenuMusic); //called for init setup
 	
 	bool ValidateWidgets() const;
 	
@@ -91,4 +91,9 @@ private:
 	//settings widgets
 	UPROPERTY() TSubclassOf<USettingsWidget> SettingsWidgetClass;
 	UPROPERTY() TObjectPtr<USettingsWidget> SettingsWidget;
+	
+	// =========================================================
+	// sound
+	// =========================================================
+	UPROPERTY(EditDefaultsOnly, Category = "Audio") USoundBase* MainMenuMusic;
 };

@@ -5,18 +5,29 @@
 #include "MainMenuManager.h"
 #include "Components/WidgetSwitcher.h"
 #include "Framework/UIWidgets/SettingsWidget.h"
+#include "Kismet/GameplayStatics.h"
 
-void USettingsManager::Initialize(APlayerController* InPlayerController, TSubclassOf<USettingsWidget> InSettingsWidget)
+void USettingsManager::Initialize(APlayerController* InPlayerController, TSubclassOf<USettingsWidget> InSettingsWidget,USoundClass* InMasterSoundClass, USoundClass* InMusicSoundClass, USoundClass* InSFXSoundClass,USoundMix* InSettingsSoundMix)
 {
 	PlayerController = InPlayerController;
 	SettingsWidgetClass = InSettingsWidget;
-	
-	if (!Validate())
-	{
-		return;
-	}
+
+	MasterSoundClass = InMasterSoundClass;
+	MusicSoundClass = InMusicSoundClass;
+	SFXSoundClass = InSFXSoundClass;
+	SettingsSoundMix = InSettingsSoundMix;
+
 	CurrentState = ESettingsMenuStates::General;
 	StateStack.Empty();
+
+	UE_LOG(LogTemp, Warning, TEXT("Settings Manager Initialized"));
+	
+	if (PlayerController && SettingsSoundMix)
+	{
+		UGameplayStatics::PushSoundMixModifier(PlayerController,SettingsSoundMix);
+
+		UE_LOG(LogTemp, Warning, TEXT("Settings Sound Mix Activated"));
+	}
 }
 
 void USettingsManager::SetSettingsWidget(USettingsWidget* InSettingsWidget)
@@ -90,14 +101,55 @@ void USettingsManager::GoBack()
 void USettingsManager::MasterVolumeChanged(float Volume)
 {
 	MasterVolume = Volume;
-	
-	UE_LOG(LogTemp, Warning, TEXT("Master Volume Changed"));
+
+	if (!PlayerController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot change Master Volume: No Player Controller"));
+		return;
+	}
+
+	if (!SettingsSoundMix)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot change Master Volume: No Sound Mix"));
+		return;
+	}
+
+	if (!MasterSoundClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot change Master Volume: No Master Sound Class"));
+		return;
+	}
+
+	UGameplayStatics::SetSoundMixClassOverride(PlayerController,SettingsSoundMix,MasterSoundClass,MasterVolume,1.0f,0.0f,true);
+
+	UE_LOG(LogTemp,Warning,TEXT("Master Volume Changed: %f"),MasterVolume);
 }
 
 void USettingsManager::SFXVolumeChanged(float Volume)
 {
 	SFXVolume = Volume;
-	UE_LOG(LogTemp, Warning, TEXT("SFX Volume Changed"));
+
+	if (!PlayerController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot change SFX Volume: No Player Controller"));
+		return;
+	}
+
+	if (!SettingsSoundMix)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot change SFX Volume: No Sound Mix"));
+		return;
+	}
+
+	if (!SFXSoundClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot change SFX Volume: No SFX Sound Class"));
+		return;
+	}
+
+	UGameplayStatics::SetSoundMixClassOverride(PlayerController,SettingsSoundMix,SFXSoundClass,SFXVolume,1.0f,0.0f,false);
+
+	UE_LOG(LogTemp,Warning,TEXT("SFX Volume Changed: %f"),SFXVolume);
 }
 
 ESettingsMenuStates USettingsManager::GetCurrentState() const

@@ -49,15 +49,14 @@ void AMainMenuPlayerController::BeginPlay()
 
 	USettingsManager* SettingsManager = Services->GetSettingsManager();
 	
-	MenuManager->Initialize( this, GameMode->MainMenuWidgetClass, GameMode->SettingsWidgetClass, MainMenuCamera);
+	MenuManager->Initialize( this, GameMode->MainMenuWidgetClass, GameMode->SettingsWidgetClass, MainMenuCamera, GameMode->MainMenuMusic);
 	
 	if (!SettingsManager)
 	{
 		return;
 	}
 	
-	SettingsManager->Initialize(this, GameMode->SettingsWidgetClass);
-	
+	SettingsManager->Initialize(this,GameMode->SettingsWidgetClass,GameMode->MasterSoundClass,GameMode->MusicSoundClass,GameMode->SFXSoundClass,GameMode->SettingsSoundMix);
 }
 
 void AMainMenuPlayerController::SetupInputComponent()
