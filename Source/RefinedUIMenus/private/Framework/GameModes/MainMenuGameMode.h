@@ -5,6 +5,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "MainMenuGameMode.generated.h"
 
+class UCreditsWidget;
 class AMainMenuCamera;
 class UMainMenuWidget;
 class USettingsWidget;
@@ -21,6 +22,7 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI") TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI") TSubclassOf<USettingsWidget> SettingsWidgetClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI") TSubclassOf<UCreditsWidget> CreditsWidgetClass;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI") TObjectPtr<AMainMenuCamera> MainMenuCamera;
 	
 	//audio

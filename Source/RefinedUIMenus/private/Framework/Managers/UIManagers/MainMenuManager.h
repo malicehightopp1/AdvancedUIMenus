@@ -6,6 +6,7 @@
 #include "UObject/Object.h"
 #include "MainMenuManager.generated.h"
 
+class UCreditsWidget;
 class USettingsManager;
 class USettingsWidget;
 class UMainMenuWidget;
@@ -29,7 +30,7 @@ class UMainMenuManager : public UObject
 	
 public:
 	UFUNCTION() void OnCameraTransitionFinished();
-	void Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass, AMainMenuCamera* InMainMenuCamera, USoundBase* InMainMenuMusic); //called for init setup
+	void Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass, AMainMenuCamera* InMainMenuCamera, USoundBase* InMainMenuMusic, TSubclassOf<UCreditsWidget> InCreditsMenu); //called for init setup
 	
 	bool ValidateWidgets() const;
 	
@@ -85,12 +86,15 @@ private:
 	
 	//Main menu widgets
 	UPROPERTY() TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
-	
 	UPROPERTY() TObjectPtr<UMainMenuWidget> MainMenuWidget;
 	
 	//settings widgets
 	UPROPERTY() TSubclassOf<USettingsWidget> SettingsWidgetClass;
 	UPROPERTY() TObjectPtr<USettingsWidget> SettingsWidget;
+	
+	//Credits widget
+	UPROPERTY() TSubclassOf<UCreditsWidget> CreditsWidgetClass;
+	UPROPERTY() TObjectPtr<UCreditsWidget> CreditsWidget;
 	
 	// =========================================================
 	// sound

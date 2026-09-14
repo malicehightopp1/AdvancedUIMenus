@@ -7,6 +7,7 @@
 #include "Components/Widget.h"
 #include "Framework/Managers/Player/PlayerCamera/MainMenuCamera.h"
 #include "Framework/Services/ServiceLocatorSubSystem.h"
+#include "Framework/UIWidgets/CreditsWidget.h"
 #include "Framework/UIWidgets/MainMenuWidget.h"
 #include "Input/Reply.h"
 #include "Framework/UIWidgets/SettingsWidget.h"
@@ -17,14 +18,16 @@ class USoundBase;
 
 #pragma region Initial Setup functions
 
-void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass, AMainMenuCamera* InMainMenuCamera,USoundBase* InMainMenuMusic)
+void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass, AMainMenuCamera* InMainMenuCamera,USoundBase* InMainMenuMusic,  TSubclassOf<UCreditsWidget> InCreditsMenu)
 {
 	PlayerController = InPlayerController;
 	MainMenuWidgetClass = InMainMenuWidgetClass;
 	SettingsWidgetClass = InSettingsWidgetClass;
-	MainMenuMusic = InMainMenuMusic;
+	CreditsWidgetClass = InCreditsMenu;
 	
+	MainMenuMusic = InMainMenuMusic;
 	MainMenuCamera = InMainMenuCamera;
+	
 	if (MainMenuCamera)
 	{
 		MainMenuCamera->OnCameraTransitionFinished.AddDynamic(this, &UMainMenuManager::OnCameraTransitionFinished);
@@ -82,6 +85,12 @@ void UMainMenuManager::CreateWidgets()
 
 		return;
 	}
+	if(!CreditsWidgetClass)
+	{
+		UE_LOG(LogTemp,Error,TEXT("CreditsWidgetClass is NOT assigned!"));
+
+		return;
+	}
 
 	//Main Menu widgets
 	MainMenuWidget = CreateWidget<UMainMenuWidget>(PlayerController,MainMenuWidgetClass);
@@ -128,6 +137,20 @@ void UMainMenuManager::CreateWidgets()
 	
 	SettingsWidget->AddToViewport(1);
 	SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
+	
+	CreditsWidget = CreateWidget<UCreditsWidget>(PlayerController, CreditsWidgetClass);
+	
+	if (!CreditsWidget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to create CreditsWidget"));
+		
+		return;
+	}
+	
+	CreditsWidget->SetMainMenuManager(this);
+	
+	CreditsWidget->AddToViewport(2);
+	CreditsWidget->SetVisibility(ESlateVisibility::Hidden);
 }
 
 #pragma endregion
@@ -300,20 +323,29 @@ void UMainMenuManager::ApplyState()
 		EMainMenuState::Idle:
 		MainMenuWidget->SetVisibility(ESlateVisibility::Visible);
 		SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
+		CreditsWidget->SetVisibility(ESlateVisibility::Hidden);
 		MainMenuWidget->PanelSwitcher->SetActiveWidgetIndex(0);
 		break;
 	case EMainMenuState::Main:
 		MainMenuWidget->SetVisibility(ESlateVisibility::Visible);
 		SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
+		CreditsWidget->SetVisibility(ESlateVisibility::Hidden);
 		MainMenuWidget->PanelSwitcher->SetActiveWidgetIndex(1);
 		break;
 	case EMainMenuState::Settings:
 		MainMenuWidget->SetVisibility(ESlateVisibility::Hidden);
 		SettingsWidget->SetVisibility(ESlateVisibility::Visible);
+		CreditsWidget->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	case EMainMenuState::Playing:
 		MainMenuWidget->SetVisibility(ESlateVisibility::Hidden);
 		SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
+		CreditsWidget->SetVisibility(ESlateVisibility::Hidden);
+		break;
+	case EMainMenuState::Credits:
+		MainMenuWidget->SetVisibility(ESlateVisibility::Hidden);
+		SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
+		CreditsWidget->SetVisibility(ESlateVisibility::Visible);
 		break;
 		
 	default:
