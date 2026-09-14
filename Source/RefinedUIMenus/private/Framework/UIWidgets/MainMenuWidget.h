@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "MainMenuWidget.generated.h"
 
+class UAudioButtonBase;
 class UWidgetSwitcher;
 class USizeBox;
 class UVerticalBox;
@@ -51,10 +52,10 @@ public:
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UBorder> BackgroundBorder;
 
 	//Buttons
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> StartGameButton;
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> SettingsButton;
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> QuitButton;
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> CreditsButton;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> StartGameButton;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> SettingsButton;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> QuitButton;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> CreditsButton;
 
 	//=================================================//
 	//				references

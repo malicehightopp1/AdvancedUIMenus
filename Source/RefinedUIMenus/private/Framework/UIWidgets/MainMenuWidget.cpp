@@ -6,6 +6,7 @@
 #include "Blueprint/WidgetTree.h"
 #include "Components/Button.h"
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
+#include "WidgetComponents/AudioButtonBase.h"
 
 void UMainMenuWidget::NativeConstruct()
 {

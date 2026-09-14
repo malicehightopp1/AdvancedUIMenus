@@ -14,6 +14,8 @@ UCLASS()
 class UAudioWidget : public UUserWidget
 {
 	GENERATED_BODY()
+public:
+	UFUNCTION() void SetSettingsManager(USettingsManager* InSettingsManager);
 	
 protected:
 	virtual void NativeOnInitialized() override;
@@ -30,8 +32,13 @@ protected:
 	UPROPERTY(meta = (BindWidget)) USlider* SFXVolumeSlider;
 	UPROPERTY(meta = (BindWidget)) UTextBlock* SFXVolumeTextBlock;
 	
+	//music
+	UFUNCTION() void OnMusicVolumeChanged(float Value);
+	
+	UPROPERTY(meta = (BindWidget)) USlider* MusicVolumeSlider;
+	UPROPERTY(meta = (BindWidget)) UTextBlock* MusicVolumeTextBlock;
+	
 	//References
-	UFUNCTION() void SetSettingsManager(USettingsManager* InSettingsManager);
 	UPROPERTY() USettingsManager* SettingsManager;
 	
 private:

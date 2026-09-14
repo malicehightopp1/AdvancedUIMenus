@@ -8,6 +8,8 @@
 #include "Components/TextBlock.h"
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
 #include "Framework/Managers/UIManagers/SettingsManager.h"
+#include "SettingsInternalWidgets/AudioWidget.h"
+#include "WidgetComponents/AudioButtonBase.h"
 
 
 void USettingsWidget::NativeConstruct()
@@ -56,6 +58,11 @@ void USettingsWidget::NativeOnInitialized()
 void USettingsWidget::SetSettingsManager(USettingsManager* NewSettingManager)
 {
 	SettingsManager = NewSettingManager;
+
+	if (AudioWidget)
+	{
+		AudioWidget->SetSettingsManager(SettingsManager);
+	}
 }
 
 void USettingsWidget::OnBackButtonPressed()

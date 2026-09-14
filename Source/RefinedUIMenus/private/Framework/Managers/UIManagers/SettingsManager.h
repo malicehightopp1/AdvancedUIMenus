@@ -52,6 +52,7 @@ public:
 	
 	void MasterVolumeChanged(float Volume);
 	void SFXVolumeChanged(float Volume);
+	void MusicVolumeChanged(float Volume);
 	
 	// =========================================================
 	// States
@@ -86,6 +87,7 @@ private:
 	
 	float MasterVolume = 1.0f;
 	float SFXVolume = 1.0f;
+	float MusicVolume = 1.0f;
 	
 protected:
 	// =========================================================

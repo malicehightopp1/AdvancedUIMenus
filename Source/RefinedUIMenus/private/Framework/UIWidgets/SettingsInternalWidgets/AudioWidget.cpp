@@ -10,29 +10,31 @@
 void UAudioWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-	
 
 	if (MasterVolumeSlider)
 	{
+		MasterVolumeSlider->OnValueChanged.AddDynamic(this,&UAudioWidget::OnMasterVolumeChanged);
+		
 		MasterVolumeSlider->SetValue(StartingValue);
-
-		MasterVolumeSlider->OnValueChanged.AddDynamic(this, &UAudioWidget::OnMasterVolumeChanged);
-
-		OnMasterVolumeChanged(StartingValue);
 	}
 
 	if (SFXVolumeSlider)
 	{
-		SFXVolumeSlider->SetValue(StartingValue);
-
 		SFXVolumeSlider->OnValueChanged.AddDynamic(this,&UAudioWidget::OnSFXVolumeChanged);
-
-		OnSFXVolumeChanged(StartingValue);
+		
+		SFXVolumeSlider->SetValue(StartingValue);
+	}
+	if (MusicVolumeSlider)
+	{
+		MusicVolumeSlider->OnValueChanged.AddDynamic(this,&UAudioWidget::OnMusicVolumeChanged);
+		
+		MusicVolumeSlider->SetValue(StartingValue);
 	}
 }
 
 void UAudioWidget::OnMasterVolumeChanged(float Value)
 {
+	UE_LOG(LogTemp, Warning, TEXT("AUDIO WIDGET MASTER SLIDER: %f"), Value);
 	if (SettingsManager)
 	{
 		SettingsManager->MasterVolumeChanged(Value);
@@ -57,7 +59,44 @@ void UAudioWidget::OnSFXVolumeChanged(float Value)
 	}
 }
 
+void UAudioWidget::OnMusicVolumeChanged(float Value)
+{
+	if (SettingsManager)
+	{
+		SettingsManager->MusicVolumeChanged(Value);
+		
+		if (MusicVolumeTextBlock)
+		{
+			int32 VolumePercent = FMath::RoundToInt(Value * 100.0f);
+			MusicVolumeTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Music Volume: %d%%"), VolumePercent)));
+		}
+	}
+}
+
 void UAudioWidget::SetSettingsManager(USettingsManager* InSettingsManager)
 {
 	SettingsManager = InSettingsManager;
+
+	if (!SettingsManager)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AudioWidget: SettingsManager is NULL"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("AudioWidget: SettingsManager assigned"));
+
+	if (MasterVolumeTextBlock)
+	{
+		MasterVolumeTextBlock->SetText(FText::FromString(TEXT("Master Volume: 50%")));
+	}
+
+	if (SFXVolumeTextBlock)
+	{
+		SFXVolumeTextBlock->SetText(FText::FromString(TEXT("SFX Volume: 50%")));
+	}
+
+	if (MusicVolumeTextBlock)
+	{
+		MusicVolumeTextBlock->SetText(FText::FromString(TEXT("Music Volume: 50%")));
+	}
 }

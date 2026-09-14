@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "SettingsWidget.generated.h"
 
+class UAudioButtonBase;
 class USettingsManager;
 class UTextBlock;
 class UCanvasPanel;
@@ -32,7 +33,6 @@ public:
 	
 	UFUNCTION() void SetSettingsManager(USettingsManager* NewSettingsManager);
 
-	
 	UFUNCTION() void OnBackButtonPressed();
 	
 	UFUNCTION() void OnGeneralClicked();
@@ -44,12 +44,12 @@ public:
 private:
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UOverlay> ComponentHoldersOverlay;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UBorder> SettingsBackground;
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> BackButton;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> BackButton;
 	
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> GeneralButton;
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> GraphicsButton;
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> AudioButton;
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UButton> ControlsButton;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> GeneralButton;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> GraphicsButton;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> AudioButton;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> ControlsButton;
 	
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UGraphicsWidget> GraphicsWidget;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UControlsWidget> ControlsWidget;

@@ -152,6 +152,27 @@ void USettingsManager::SFXVolumeChanged(float Volume)
 	UE_LOG(LogTemp,Warning,TEXT("SFX Volume Changed: %f"),SFXVolume);
 }
 
+void USettingsManager::MusicVolumeChanged(float Volume)
+{
+	MusicVolume = Volume;
+	if (!PlayerController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot change Music Volume: No Player Controller")); return;
+	} 
+	if (!SettingsSoundMix)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot change Music Volume: No Sound Mix")); return;
+	} 
+	if (!MusicSoundClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot change Music Volume: No Music Sound Class")); return;
+	} 
+	
+	UE_LOG(LogTemp, Warning, TEXT("SETTING MUSIC VOLUME TO: %f"), Volume);
+	
+	UGameplayStatics::SetSoundMixClassOverride( PlayerController, SettingsSoundMix, MusicSoundClass, MusicVolume, 1.0f, 0.0f, false ); 
+}
+
 ESettingsMenuStates USettingsManager::GetCurrentState() const
 {
 	return CurrentState;
