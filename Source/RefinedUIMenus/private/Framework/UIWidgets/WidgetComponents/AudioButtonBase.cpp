@@ -9,14 +9,14 @@ void UAudioButtonBase::PostLoad()
 {
 	Super::PostLoad();
 	
-	OnClicked.AddDynamic(this, &UAudioButtonBase::PlayClickSound);
+	OnClicked.AddUniqueDynamic(this, &UAudioButtonBase::PlayClickSound);
 }
 
 void UAudioButtonBase::PostInitProperties()
 {
 	Super::PostInitProperties();
 	
-	OnClicked.AddDynamic(this, &UAudioButtonBase::PlayClickSound);
+	OnClicked.AddUniqueDynamic(this, &UAudioButtonBase::PlayClickSound);
 }
 
 void UAudioButtonBase::PlayClickSound()
