@@ -49,7 +49,7 @@ void AMainMenuPlayerController::BeginPlay()
 
 	USettingsManager* SettingsManager = Services->GetSettingsManager();
 	
-	MenuManager->Initialize( this, GameMode->MainMenuWidgetClass, GameMode->SettingsWidgetClass, MainMenuCamera, GameMode->MainMenuMusic, GameMode->CreditsWidgetClass);
+	MenuManager->Initialize( this, GameMode->MainMenuWidgetClass, GameMode->SettingsWidgetClass, MainMenuCamera, GameMode->MainMenuMusic, GameMode->CreditsWidgetClass, GameMode->ConfirmWidgetClass);
 	
 	if (!SettingsManager)
 	{

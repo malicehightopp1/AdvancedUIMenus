@@ -23,6 +23,10 @@ protected:
 	virtual void PostLoad() override;
 
 	virtual void PostInitProperties() override;
+	
+	UFUNCTION()void OnButtonHovered();
+
+	UFUNCTION()void OnButtonUnhovered();
 
 private:
 

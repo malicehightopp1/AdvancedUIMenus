@@ -7,6 +7,7 @@
 #include "Components/Button.h"
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
 #include "WidgetComponents/AudioButtonBase.h"
+#include "WidgetComponents/ConfirmQuit.h"
 
 void UMainMenuWidget::NativeConstruct()
 {
@@ -65,10 +66,7 @@ void UMainMenuWidget::OnSettingsClicked()
 
 void UMainMenuWidget::OnQuitClicked()
 {
-	if (MainMenuManager)
-	{
-		MainMenuManager->QuitGame();
-	}
+	ConfirmQuit->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UMainMenuWidget::OnCreditsClicked()

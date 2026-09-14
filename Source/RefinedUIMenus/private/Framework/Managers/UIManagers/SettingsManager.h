@@ -6,6 +6,7 @@
 #include "UObject/Object.h"
 #include "SettingsManager.generated.h"
 
+class UConfirmQuit;
 class USettingsWidget;
 class UMainMenuManager;
 class USoundClass;

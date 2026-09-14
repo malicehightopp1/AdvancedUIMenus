@@ -11,6 +11,7 @@
 #include "Framework/UIWidgets/MainMenuWidget.h"
 #include "Input/Reply.h"
 #include "Framework/UIWidgets/SettingsWidget.h"
+#include "Framework/UIWidgets/WidgetComponents/ConfirmQuit.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -18,12 +19,13 @@ class USoundBase;
 
 #pragma region Initial Setup functions
 
-void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass, AMainMenuCamera* InMainMenuCamera,USoundBase* InMainMenuMusic,  TSubclassOf<UCreditsWidget> InCreditsMenu)
+void UMainMenuManager::Initialize(APlayerController* InPlayerController, TSubclassOf<UMainMenuWidget> InMainMenuWidgetClass, TSubclassOf<USettingsWidget> InSettingsWidgetClass, AMainMenuCamera* InMainMenuCamera,USoundBase* InMainMenuMusic,  TSubclassOf<UCreditsWidget> InCreditsMenu, TSubclassOf<UConfirmQuit> InConfirmQuit)
 {
 	PlayerController = InPlayerController;
 	MainMenuWidgetClass = InMainMenuWidgetClass;
 	SettingsWidgetClass = InSettingsWidgetClass;
 	CreditsWidgetClass = InCreditsMenu;
+	ConfirmQuitClass = InConfirmQuit;
 	
 	MainMenuMusic = InMainMenuMusic;
 	MainMenuCamera = InMainMenuCamera;
