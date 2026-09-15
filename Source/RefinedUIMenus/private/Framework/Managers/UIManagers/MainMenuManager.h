@@ -38,6 +38,8 @@ public:
 	UFUNCTION() void StartGame();
 	UFUNCTION()void OpenSettings();
 	UFUNCTION()void OpenCredits();
+	UFUNCTION()void OpenConfirmQuitMenu();
+	UFUNCTION()void CloseConfirmQuitMenu();
 	UFUNCTION()void QuitGame();
 	
 	void GoBack();
@@ -104,5 +106,6 @@ private:
 	// =========================================================
 	// sound
 	// =========================================================
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Audio") USoundBase* MainMenuMusic;
 };

@@ -153,6 +153,23 @@ void UMainMenuManager::CreateWidgets()
 	
 	CreditsWidget->AddToViewport(2);
 	CreditsWidget->SetVisibility(ESlateVisibility::Hidden);
+	
+	if (!ConfirmQuitClass)
+	{
+		UE_LOG(LogTemp,Log,TEXT("No confirm quit class"));
+		return;
+	}
+	ConfirmQuit = CreateWidget<UConfirmQuit>(PlayerController, ConfirmQuitClass);
+	
+	if (!ConfirmQuit)
+	{
+		UE_LOG(LogTemp,Log,TEXT("Failed to create ConfirmQuit"));
+		return;
+	}
+	
+	ConfirmQuit->SetMainMenuManager(this);
+	ConfirmQuit->AddToViewport(3);
+	ConfirmQuit->SetVisibility(ESlateVisibility::Hidden);
 }
 
 #pragma endregion
@@ -175,6 +192,24 @@ void UMainMenuManager::OpenCredits()
 {
 	UE_LOG(LogTemp,Log,TEXT("Credits Clicked"));
 	SetState(EMainMenuState::Credits);
+}
+
+void UMainMenuManager::OpenConfirmQuitMenu()
+{
+	if (!ConfirmQuit)
+	{
+		return;
+	}
+	ConfirmQuit->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UMainMenuManager::CloseConfirmQuitMenu()
+{
+	if (!ConfirmQuit)
+	{
+		return;
+	}
+	ConfirmQuit->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainMenuManager::QuitGame()
@@ -345,6 +380,7 @@ void UMainMenuManager::ApplyState()
 		CreditsWidget->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	case EMainMenuState::Credits:
+		UE_LOG(LogTemp, Warning, TEXT("Set state to credits"))
 		MainMenuWidget->SetVisibility(ESlateVisibility::Hidden);
 		SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
 		CreditsWidget->SetVisibility(ESlateVisibility::Visible);

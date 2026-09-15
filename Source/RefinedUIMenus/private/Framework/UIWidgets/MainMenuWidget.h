@@ -51,7 +51,6 @@ public:
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UOverlay> UiHolder;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UWidgetSwitcher> PanelSwitcher;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UBorder> BackgroundBorder;
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UConfirmQuit> ConfirmQuit;
 	
 	//Buttons
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> StartGameButton;

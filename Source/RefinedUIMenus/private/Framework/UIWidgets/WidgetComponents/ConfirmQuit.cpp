@@ -3,7 +3,22 @@
 
 #include "Framework/UIWidgets/WidgetComponents/ConfirmQuit.h"
 
+#include "AudioButtonBase.h"
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
+
+void UConfirmQuit::NativeConstruct()
+{
+	Super::NativeConstruct();
+	
+	if (QuitButtonYes)
+	{
+		QuitButtonYes->OnClicked.AddDynamic(this, &UConfirmQuit::OnYesClicked);
+	}
+	if (QuitButtonNo)
+	{
+		QuitButtonNo->OnClicked.AddDynamic(this, &UConfirmQuit::OnNoClicked);
+	}
+}
 
 void UConfirmQuit::OnYesClicked()
 {
@@ -15,7 +30,10 @@ void UConfirmQuit::OnYesClicked()
 
 void UConfirmQuit::OnNoClicked()
 {
-	SetVisibility(ESlateVisibility::Hidden);
+	if (MainMenuManager)
+	{
+		MainMenuManager->CloseConfirmQuitMenu();
+	}
 }
 
 void UConfirmQuit::SetMainMenuManager(UMainMenuManager* NewMainMenuManager)

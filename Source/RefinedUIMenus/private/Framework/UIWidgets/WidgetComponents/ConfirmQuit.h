@@ -15,6 +15,8 @@ class UConfirmQuit : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	virtual void NativeConstruct() override;
+	
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> QuitButtonNo;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> QuitButtonYes;
 	

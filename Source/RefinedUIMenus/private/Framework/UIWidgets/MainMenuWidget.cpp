@@ -29,7 +29,7 @@ bool UMainMenuWidget::Initialize() //this is running but not the text block
 void UMainMenuWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-
+	
 	if (StartGameButton)
 	{
 		StartGameButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnPlayClicked);
@@ -66,7 +66,11 @@ void UMainMenuWidget::OnSettingsClicked()
 
 void UMainMenuWidget::OnQuitClicked()
 {
-	ConfirmQuit->SetVisibility(ESlateVisibility::Visible);
+	UE_LOG(LogTemp, Warning, TEXT("Quit clicked, confirm quit should be open"))
+	if (MainMenuManager)
+	{
+		MainMenuManager->OpenConfirmQuitMenu();
+	}
 }
 
 void UMainMenuWidget::OnCreditsClicked()
