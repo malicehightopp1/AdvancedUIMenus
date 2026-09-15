@@ -5,6 +5,7 @@
 #include "MainMenuManager.h"
 #include "Components/WidgetSwitcher.h"
 #include "Framework/UIWidgets/SettingsWidget.h"
+#include "GameFramework/GameUserSettings.h"
 #include "Kismet/GameplayStatics.h"
 
 void USettingsManager::Initialize(APlayerController* InPlayerController, TSubclassOf<USettingsWidget> InSettingsWidget,USoundClass* InMasterSoundClass, USoundClass* InMusicSoundClass, USoundClass* InSFXSoundClass,USoundMix* InSettingsSoundMix)
@@ -171,6 +172,21 @@ void USettingsManager::MusicVolumeChanged(float Volume)
 	UE_LOG(LogTemp, Warning, TEXT("SETTING MUSIC VOLUME TO: %f"), Volume);
 	
 	UGameplayStatics::SetSoundMixClassOverride( PlayerController, SettingsSoundMix, MusicSoundClass, MusicVolume, 1.0f, 0.0f, false ); 
+}
+
+void USettingsManager::ChangefullScreen(bool IsInFullscreen)
+{
+	UGameUserSettings* GameSettings = GEngine->GetGameUserSettings();
+	
+	if (IsInFullscreen)
+	{
+		GameSettings->SetFullscreenMode(EWindowMode::Fullscreen);
+	}
+	else
+	{
+		GameSettings->SetFullscreenMode(EWindowMode::Windowed);
+	}
+	
 }
 
 ESettingsMenuStates USettingsManager::GetCurrentState() const

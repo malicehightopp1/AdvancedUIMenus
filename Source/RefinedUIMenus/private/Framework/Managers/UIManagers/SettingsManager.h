@@ -55,6 +55,8 @@ public:
 	void SFXVolumeChanged(float Volume);
 	void MusicVolumeChanged(float Volume);
 	
+	void ChangefullScreen(bool IsInFullscreen);
+	
 	// =========================================================
 	// States
 	// =========================================================
@@ -89,6 +91,10 @@ private:
 	float MasterVolume = 1.0f;
 	float SFXVolume = 1.0f;
 	float MusicVolume = 1.0f;
+	
+	// =========================================================
+	// Graphics Values
+	// =========================================================
 	
 protected:
 	// =========================================================

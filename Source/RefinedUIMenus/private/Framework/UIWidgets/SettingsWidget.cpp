@@ -4,11 +4,9 @@
 #include "Framework/UIWidgets/SettingsWidget.h"
 
 #include "Components/Button.h"
-#include "Components/CanvasPanel.h"
-#include "Components/TextBlock.h"
-#include "Framework/Managers/UIManagers/MainMenuManager.h"
 #include "Framework/Managers/UIManagers/SettingsManager.h"
 #include "SettingsInternalWidgets/AudioWidget.h"
+#include "SettingsInternalWidgets/GraphicsWidget.h"
 #include "WidgetComponents/AudioButtonBase.h"
 
 
@@ -62,6 +60,7 @@ void USettingsWidget::SetSettingsManager(USettingsManager* NewSettingManager)
 	if (AudioWidget)
 	{
 		AudioWidget->SetSettingsManager(SettingsManager);
+		GraphicsWidget->SetSettingsManager(SettingsManager);
 	}
 }
 
