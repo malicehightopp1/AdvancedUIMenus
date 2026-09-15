@@ -15,6 +15,8 @@ void UGraphicsWidget::NativeConstruct()
 		FullscreenBox->OnCheckStateChanged.RemoveDynamic(this, &UGraphicsWidget::FullScreenCheckChanged);
 		
 		FullscreenBox->OnCheckStateChanged.AddDynamic(this, &UGraphicsWidget::FullScreenCheckChanged);
+		
+		FullscreenBox->SetIsChecked(true);
 	}
 }
 

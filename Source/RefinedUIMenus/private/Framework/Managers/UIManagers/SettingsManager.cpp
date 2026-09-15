@@ -8,6 +8,26 @@
 #include "GameFramework/GameUserSettings.h"
 #include "Kismet/GameplayStatics.h"
 
+void USettingsManager::SetMasterVolume(float Value)
+{
+	MasterVolume = Value;
+}
+
+void USettingsManager::SetMusicVolume(float Value)
+{
+	MusicVolume = Value;
+}
+
+void USettingsManager::SetSfxVolume(float Value)
+{
+	SFXVolume = Value;
+}
+
+void USettingsManager::SetFullscreen(bool Enabled)
+{
+	bIsFullscreen = Enabled;
+}
+
 void USettingsManager::Initialize(APlayerController* InPlayerController, TSubclassOf<USettingsWidget> InSettingsWidget,USoundClass* InMasterSoundClass, USoundClass* InMusicSoundClass, USoundClass* InSFXSoundClass,USoundMix* InSettingsSoundMix)
 {
 	PlayerController = InPlayerController;
@@ -29,6 +49,7 @@ void USettingsManager::Initialize(APlayerController* InPlayerController, TSubcla
 
 		UE_LOG(LogTemp, Warning, TEXT("Settings Sound Mix Activated"));
 	}
+	ChangefullScreen(bIsFullscreen); //changing to fullscreen on init
 }
 
 void USettingsManager::SetSettingsWidget(USettingsWidget* InSettingsWidget)
@@ -176,17 +197,24 @@ void USettingsManager::MusicVolumeChanged(float Volume)
 
 void USettingsManager::ChangefullScreen(bool IsInFullscreen)
 {
+	SetFullscreen(IsInFullscreen);
+	
 	UGameUserSettings* GameSettings = GEngine->GetGameUserSettings();
 	
-	if (IsInFullscreen)
+	bIsFullscreen = IsInFullscreen;
+	
+	if (bIsFullscreen)
 	{
-		GameSettings->SetFullscreenMode(EWindowMode::Fullscreen);
+		GameSettings->SetFullscreenMode(EWindowMode::WindowedFullscreen);
 	}
 	else
 	{
 		GameSettings->SetFullscreenMode(EWindowMode::Windowed);
 	}
 	
+	GameSettings->ApplyResolutionSettings(false);
+	
+	UE_LOG(LogTemp, Warning, TEXT("Changed Window Mode: %s"), IsInFullscreen ? TEXT("Fullscreen") : TEXT("Windowed"));
 }
 
 ESettingsMenuStates USettingsManager::GetCurrentState() const

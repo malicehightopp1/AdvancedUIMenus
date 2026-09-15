@@ -4,6 +4,8 @@
 #include "Framework/Services/ServiceLocatorSubSystem.h"
 
 #include "Framework/Managers/Player/PlayerCamera/MainMenuCamera.h"
+#include "Framework/Managers/SavingManager/SettingsSaveGame.h"
+#include "Framework/Managers/SavingManager/SettingsSaveManager.h"
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
 #include "Framework/Managers/UIManagers/SettingsManager.h"
 
@@ -13,6 +15,10 @@ void UServiceLocatorSubSystem::Initialize(FSubsystemCollectionBase& Collection)
 	
 	MainMenuManager = NewObject<UMainMenuManager>(this); //creating the main menu manager, "this" is basically saying that the service locator owns the manager
 	SettingsManager = NewObject<USettingsManager>(this);
+	SettingsSaveManager = NewObject<USettingsSaveManager>(this);
+	
+	
+	SettingsSaveManager->Initialize(SettingsManager);
 	
 	UE_LOG(LogTemp, Warning, TEXT("Service locator initilized"))
 }
@@ -23,6 +29,8 @@ void UServiceLocatorSubSystem::Deinitialize()
 	
 	MainMenuManager = nullptr;
 	SettingsManager = nullptr;
+	SettingsSaveManager = nullptr;
+	
 	UE_LOG(LogTemp, Warning, TEXT("Service locator DeInitilized"))
 }
 
@@ -57,4 +65,8 @@ USettingsManager* UServiceLocatorSubSystem::GetSettingsManager() const
 	return SettingsManager;
 }
 
+USettingsSaveManager* UServiceLocatorSubSystem::GetSettingsSaveManager() const
+{
+	return SettingsSaveManager;
+}
 #pragma endregion Getters

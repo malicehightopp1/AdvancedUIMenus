@@ -27,6 +27,18 @@ class USettingsManager : public UObject
 	GENERATED_BODY()
 
 public:
+	float GetMasterVolume() const {return MasterVolume;};
+	void SetMasterVolume(float Value);
+	
+	float GetMusicVolume() const {return MusicVolume;};
+	void SetMusicVolume(float Value);
+	
+	float GetSfxVolume() const {return SFXVolume;};
+	void SetSfxVolume(float Value);
+	
+	bool GetFullscreen() const {return bIsFullscreen;}; 
+	void SetFullscreen(bool Enabled);
+	
 	// =========================================================
 	// Initialization
 	// =========================================================
@@ -95,6 +107,8 @@ private:
 	// =========================================================
 	// Graphics Values
 	// =========================================================
+	
+	bool bIsFullscreen = true;
 	
 protected:
 	// =========================================================

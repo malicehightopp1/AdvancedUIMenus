@@ -9,6 +9,7 @@
 class AMainMenuCamera;
 class UMainMenuManager;
 class USettingsManager;
+class USettingsSaveManager;
 
 UCLASS()
 class UServiceLocatorSubSystem : public UGameInstanceSubsystem
@@ -23,8 +24,10 @@ public:
 	
 	UMainMenuManager* GetMainMenuManager() const;
 	USettingsManager* GetSettingsManager() const;
+	USettingsSaveManager* GetSettingsSaveManager() const;
 	
 private:
 	UPROPERTY() TObjectPtr<UMainMenuManager> MainMenuManager; //the service locator owns this reference
 	UPROPERTY() TObjectPtr<USettingsManager> SettingsManager;
+	UPROPERTY() TObjectPtr<USettingsSaveManager> SettingsSaveManager;
 };
