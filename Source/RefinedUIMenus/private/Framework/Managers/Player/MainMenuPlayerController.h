@@ -6,6 +6,10 @@
 #include "GameFramework/PlayerController.h"
 #include "MainMenuPlayerController.generated.h"
 
+struct FInputActionValue;
+class UUserWidget;
+class UInputAction;
+
 UCLASS()
 class AMainMenuPlayerController : public APlayerController
 {
@@ -16,4 +20,12 @@ class AMainMenuPlayerController : public APlayerController
 	virtual void SetupInputComponent() override;
 	void HandleAnyKey();
 	
+	//Controller Setup
+	void MoveMenuCursor(const FInputActionValue& Value);
+	
+	UPROPERTY() UUserWidget* ControllerCursorWidget;
+	
+	FVector2D ControllerCurorPOS;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Input") UInputAction* ControllerCurorAction;
 };

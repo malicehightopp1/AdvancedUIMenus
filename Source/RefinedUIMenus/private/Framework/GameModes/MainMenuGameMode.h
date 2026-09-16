@@ -36,4 +36,7 @@ public:
 	
 	//Sound
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Audio")USoundBase* MainMenuMusic;
+	
+	//Controller
+	UPROPERTY(EditDefaultsOnly, Category = "UI") TSubclassOf<UUserWidget> ControllerCursorWidgetClass;
 };
