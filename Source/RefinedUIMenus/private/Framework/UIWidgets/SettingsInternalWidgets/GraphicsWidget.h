@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "GraphicsWidget.generated.h"
 
+class UComboBoxString;
 class USettingsManager;
 class UCheckBox;
 
@@ -19,8 +20,9 @@ public:
 	virtual void NativeConstruct() override;
 	
 	UFUNCTION() void SetSettingsManager(USettingsManager* NewSettingsManager);
-	UFUNCTION() void FullScreenCheckChanged(bool bIsChecked);
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UCheckBox> FullscreenBox;
+	
+	UFUNCTION() void OnWindowModeChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UComboBoxString> WindowModeComboBox;
 	
 	//references
 	UPROPERTY() TObjectPtr<USettingsManager> SettingsManager;

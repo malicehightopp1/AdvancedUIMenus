@@ -200,23 +200,16 @@ void USettingsManager::MusicVolumeChanged(float Volume)
 	UGameplayStatics::SetSoundMixClassOverride( PlayerController, SettingsSoundMix, MusicSoundClass, MusicVolume, 1.0f, 0.0f, false ); 
 }
 
-void USettingsManager::ChangefullScreen(bool IsInFullscreen)
+void USettingsManager::ChangeWindowMode(EWindowMode::Type NewWindowMode)
 {
-	SetFullscreen(IsInFullscreen);
-	
 	UGameUserSettings* GameSettings = GEngine->GetGameUserSettings();
 	
-	bIsFullscreen = IsInFullscreen;
-	
-	if (bIsFullscreen)
+	if (!GameSettings)
 	{
-		GameSettings->SetFullscreenMode(EWindowMode::WindowedFullscreen);
-	}
-	else
-	{
-		GameSettings->SetFullscreenMode(EWindowMode::Windowed);
+		return;
 	}
 	
+	GameSettings->SetFullscreenMode(NewWindowMode);
 	GameSettings->ApplyResolutionSettings(false);
 }
 

@@ -17,7 +17,6 @@ void UServiceLocatorSubSystem::Initialize(FSubsystemCollectionBase& Collection)
 	SettingsManager = NewObject<USettingsManager>(this);
 	SettingsSaveManager = NewObject<USettingsSaveManager>(this);
 	
-	
 	SettingsSaveManager->Initialize(SettingsManager);
 	SettingsManager->SetSettingsSaveManager(SettingsSaveManager);
 	

@@ -70,7 +70,7 @@ public:
 	void SFXVolumeChanged(float Volume);
 	void MusicVolumeChanged(float Volume);
 	
-	void ChangefullScreen(bool IsInFullscreen);
+	void ChangeWindowMode(EWindowMode::Type NewWindowMode);
 	
 	// =========================================================
 	// States

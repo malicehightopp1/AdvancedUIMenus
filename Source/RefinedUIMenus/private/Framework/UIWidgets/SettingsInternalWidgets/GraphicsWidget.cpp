@@ -4,45 +4,49 @@
 #include "Framework/UIWidgets/SettingsInternalWidgets/GraphicsWidget.h"
 
 #include "Components/CheckBox.h"
+#include "Components/ComboBoxString.h"
 #include "Framework/Managers/UIManagers/SettingsManager.h"
 
 void UGraphicsWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	
-	if (FullscreenBox)
+	if (WindowModeComboBox)
 	{
-		FullscreenBox->OnCheckStateChanged.RemoveDynamic(this, &UGraphicsWidget::FullScreenCheckChanged);
+		WindowModeComboBox->AddOption(TEXT("Windowed"));
+		WindowModeComboBox->AddOption(TEXT("Borderless"));
+		WindowModeComboBox->AddOption(TEXT("Fullscreen"));
 		
-		FullscreenBox->OnCheckStateChanged.AddDynamic(this, &UGraphicsWidget::FullScreenCheckChanged);
-		
-		FullscreenBox->SetIsChecked(true);
+		WindowModeComboBox->OnSelectionChanged.AddDynamic(this, &UGraphicsWidget::OnWindowModeChanged);
 	}
 }
 
 void UGraphicsWidget::SetSettingsManager(USettingsManager* NewSettingsManager)
 {
 	SettingsManager = NewSettingsManager; 
-}
-
-void UGraphicsWidget::FullScreenCheckChanged(bool BIsChecked)
-{
-	if (!FullscreenBox || !SettingsManager)
+	
+	if (!SettingsManager)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No Settings manager or fullscreen box"));
 		return;
 	}
-	if (FullscreenBox)
+}
+
+void UGraphicsWidget::OnWindowModeChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
+{
+	if (!SettingsManager)
 	{
-		if (BIsChecked)
-		{
-			SettingsManager->ChangefullScreen(true);
-			UE_LOG(LogTemp, Warning, TEXT("Fullscreen Active"));
-		}
-		else
-		{
-			SettingsManager->ChangefullScreen(false);
-			UE_LOG(LogTemp, Warning, TEXT("Windowed Active"));
-		}
+		return;
 	}
+	if (SelectedItem == TEXT("Windowed"))
+	{
+		SettingsManager->ChangeWindowMode(EWindowMode::Windowed);
+	}
+	else if (SelectedItem == TEXT("Borderless"))
+	{
+		SettingsManager->ChangeWindowMode(EWindowMode::WindowedFullscreen);
+	}
+	else if (SelectedItem == TEXT("Fullscreen"))
+    {
+		SettingsManager->ChangeWindowMode(EWindowMode::Fullscreen);
+    }
 }

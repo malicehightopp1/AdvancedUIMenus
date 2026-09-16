@@ -58,7 +58,6 @@ void USettingsSaveManager::LoadSettings()
 	SettingsManager->SetMasterVolume(SettingsSaveGame->MasterVolume);
 	SettingsManager->SetMusicVolume(SettingsSaveGame->MusicVolume);
 	SettingsManager->SetSfxVolume(SettingsSaveGame->SFXVolume);
-	SettingsManager->ChangefullScreen(SettingsSaveGame->bFullscreen);
 	
 	UE_LOG(LogTemp, Warning, TEXT("Music Loaded: %f"), SettingsSaveGame->MusicVolume);
 	
