@@ -14,6 +14,13 @@ void UMainMenuWidget::NativeConstruct()
 	Super::NativeConstruct();
 		
 	SetIsFocusable(true);
+	
+	StartGameButton->IsFocusable = true;
+	SettingsButton->IsFocusable = true;
+	CreditsButton->IsFocusable = true;
+	QuitButton->IsFocusable = true;
+	
+	StartGameButton->SetKeyboardFocus();
 }
 
 bool UMainMenuWidget::Initialize() //this is running but not the text block

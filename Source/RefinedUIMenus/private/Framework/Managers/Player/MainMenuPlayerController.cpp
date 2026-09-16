@@ -4,6 +4,7 @@
 #include "Framework/Managers/Player/MainMenuPlayerController.h"
 
 #include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 #include "Framework/GameModes/MainMenuGameMode.h"
 #include "Framework/Services/ServiceLocatorSubsystem.h"
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
@@ -14,6 +15,7 @@
 #include "Framework/UIWidgets/CreditsWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayerCamera/MainMenuCamera.h"
+#include "Framework/Application/SlateApplication.h"
 
 void AMainMenuPlayerController::BeginPlay()
 {
@@ -69,25 +71,16 @@ void AMainMenuPlayerController::BeginPlay()
 	
 	SettingsSaveManager->Initialize(SettingsManager);
 	
-	//Controller Setup 
-	
-	if (GameMode->ControllerCursorWidgetClass)
+	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
 	{
-		ControllerCursorWidget = CreateWidget<UUserWidget>(this,GameMode->ControllerCursorWidgetClass);
+		if (UEnhancedInputLocalPlayerSubsystem* InputSubsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+		{
+			if (ControllerMappingContext)
+			{
+				InputSubsystem->AddMappingContext(ControllerMappingContext, 0);
+			}
+		}
 	}
-	if (ControllerCursorWidget)
-	{
-		//for top display
-		ControllerCursorWidget->AddToViewport(100);
-	}
-	int32 ViewportSizeX;
-	int32 ViewportSizeY;
-	
-	GetViewportSize(ViewportSizeX, ViewportSizeY);
-	
-	ControllerCurorPOS = FVector2D(ViewportSizeX * 0.5f, ViewportSizeY * 0.5f);
-	
-	ControllerCursorWidget->SetPositionInViewport(ControllerCurorPOS);
 }
 
 void AMainMenuPlayerController::SetupInputComponent()
@@ -103,12 +96,8 @@ void AMainMenuPlayerController::SetupInputComponent()
 		return;
 	}
 
-	EnhancedInput->BindAction(
-		ControllerCurorAction,
-		ETriggerEvent::Triggered,
-		this,
-		&AMainMenuPlayerController::MoveMenuCursor
-	);
+	EnhancedInput->BindAction(ControllerCurorAction, ETriggerEvent::Triggered, this, &AMainMenuPlayerController::TestNav);
+	EnhancedInput->BindAction(ControllerAcceptAction, ETriggerEvent::Started, this, &AMainMenuPlayerController::AccpetMenuCursor);
 }
 
 //for begin idle state
@@ -126,30 +115,25 @@ void AMainMenuPlayerController::HandleAnyKey()
 	}
 }
 
-void AMainMenuPlayerController::MoveMenuCursor(const FInputActionValue& Value)
+void AMainMenuPlayerController::AccpetMenuCursor(const FInputActionValue& Value)
 {
-	FVector2D StickInput = Value.Get<FVector2D>();
+	UE_LOG(LogTemp, Warning, TEXT("A key pressed"));
+}
 
-	if (StickInput.IsNearlyZero())
+void AMainMenuPlayerController::TestNav(const FInputActionValue& Value)
+{
+	FVector2D Input = Value.Get<FVector2D>();
+
+	if (Input.IsNearlyZero())
 	{
 		return;
 	}
 
-	const float CursorSpeed = 800.0f;
-
-	ControllerCurorPOS += StickInput * CursorSpeed * GetWorld()->GetDeltaSeconds();
-
-	int32 ViewportSizeX;
-	int32 ViewportSizeY;
-
-	GetViewportSize(ViewportSizeX, ViewportSizeY);
-
-	ControllerCurorPOS.X = FMath::Clamp(ControllerCurorPOS.X,0.0f,static_cast<float>(ViewportSizeX));
-
-	ControllerCurorPOS.Y = FMath::Clamp(ControllerCurorPOS.Y,0.0f,static_cast<float>(ViewportSizeY));
-
-	if (ControllerCursorWidget)
-	{
-		ControllerCursorWidget->SetPositionInViewport(ControllerCurorPOS);
-	}
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("MENU NAVIGATION: X=%f Y=%f"),
+		Input.X,
+		Input.Y
+	);
 }
