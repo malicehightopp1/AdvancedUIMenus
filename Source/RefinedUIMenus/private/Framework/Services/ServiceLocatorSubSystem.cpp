@@ -19,6 +19,7 @@ void UServiceLocatorSubSystem::Initialize(FSubsystemCollectionBase& Collection)
 	
 	
 	SettingsSaveManager->Initialize(SettingsManager);
+	SettingsManager->SetSettingsSaveManager(SettingsSaveManager);
 	
 	UE_LOG(LogTemp, Warning, TEXT("Service locator initilized"))
 }

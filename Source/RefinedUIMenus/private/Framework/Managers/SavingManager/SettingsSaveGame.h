@@ -6,9 +6,7 @@
 #include "GameFramework/SaveGame.h"
 #include "SettingsSaveGame.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class USettingsSaveGame : public USaveGame
 {

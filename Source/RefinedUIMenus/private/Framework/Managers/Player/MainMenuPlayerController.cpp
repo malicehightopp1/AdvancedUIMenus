@@ -8,6 +8,7 @@
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
 #include "InputCoreTypes.h"
 #include "AI/NavigationSystemBase.h"
+#include "Framework/Managers/SavingManager/SettingsSaveManager.h"
 #include "Framework/Managers/UIManagers/SettingsManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayerCamera/MainMenuCamera.h"
@@ -24,8 +25,7 @@ void AMainMenuPlayerController::BeginPlay()
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Main Menu Camera found: %s"),
-		*MainMenuCamera->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("Main Menu Camera found: %s"), *MainMenuCamera->GetName());
 	UServiceLocatorSubSystem* Services = UServiceLocatorSubSystem::Get(this);
 
 	if (!Services)
@@ -57,6 +57,15 @@ void AMainMenuPlayerController::BeginPlay()
 	}
 	
 	SettingsManager->Initialize(this,GameMode->SettingsWidgetClass,GameMode->MasterSoundClass,GameMode->MusicSoundClass,GameMode->SFXSoundClass,GameMode->SettingsSoundMix);
+	
+	USettingsSaveManager* SettingsSaveManager = Services->GetSettingsSaveManager();
+	
+	if (!SettingsSaveManager)
+	{
+		return;
+	}
+	
+	SettingsSaveManager->Initialize(SettingsManager);
 }
 
 void AMainMenuPlayerController::SetupInputComponent()

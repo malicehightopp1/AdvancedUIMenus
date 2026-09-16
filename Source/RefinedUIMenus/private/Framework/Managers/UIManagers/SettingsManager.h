@@ -11,6 +11,7 @@ class USettingsWidget;
 class UMainMenuManager;
 class USoundClass;
 class USoundMix;
+class USettingsSaveManager;
 
 UENUM(BlueprintType)
 enum class ESettingsMenuStates : uint8
@@ -46,6 +47,7 @@ public:
 	
 	void SetSettingsWidget(USettingsWidget* InSettingsWidget);
 	void SetMainMenuManager(UMainMenuManager* InMainMenuManager);
+	void SetSettingsSaveManager(USettingsSaveManager* InSettingsSaveManager);
 	
 	bool Validate() const;
 	
@@ -58,6 +60,7 @@ public:
 	void OpenControls();
 	
 	void GoBack();
+	void ApplySettings();
 	
 	// =========================================================
 	// Functionailty of panels
@@ -85,6 +88,8 @@ private:
 	UPROPERTY() TObjectPtr<USettingsWidget> SettingsWidget;
 	
 	UPROPERTY() UMainMenuManager* MainMenuManager = nullptr;
+	
+	UPROPERTY() TObjectPtr<USettingsSaveManager> SaveManager;
 	
 	// =========================================================
 	// States
@@ -120,5 +125,3 @@ protected:
 	UPROPERTY() TObjectPtr<USoundClass> SFXSoundClass;
 	UPROPERTY() TObjectPtr<USoundMix> SettingsSoundMix;
 };
-
-

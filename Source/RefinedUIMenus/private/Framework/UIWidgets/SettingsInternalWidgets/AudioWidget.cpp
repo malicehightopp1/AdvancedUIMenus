@@ -14,21 +14,14 @@ void UAudioWidget::NativeOnInitialized()
 	if (MasterVolumeSlider)
 	{
 		MasterVolumeSlider->OnValueChanged.AddDynamic(this,&UAudioWidget::OnMasterVolumeChanged);
-		
-		MasterVolumeSlider->SetValue(StartingValue);
 	}
-
 	if (SFXVolumeSlider)
 	{
 		SFXVolumeSlider->OnValueChanged.AddDynamic(this,&UAudioWidget::OnSFXVolumeChanged);
-		
-		SFXVolumeSlider->SetValue(StartingValue);
 	}
 	if (MusicVolumeSlider)
 	{
 		MusicVolumeSlider->OnValueChanged.AddDynamic(this,&UAudioWidget::OnMusicVolumeChanged);
-		
-		MusicVolumeSlider->SetValue(StartingValue);
 	}
 }
 
@@ -64,12 +57,11 @@ void UAudioWidget::OnMusicVolumeChanged(float Value)
 	if (SettingsManager)
 	{
 		SettingsManager->MusicVolumeChanged(Value);
-		
-		if (MusicVolumeTextBlock)
-		{
-			int32 VolumePercent = FMath::RoundToInt(Value * 100.0f);
-			MusicVolumeTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Music Volume: %d%%"), VolumePercent)));
-		}
+	}
+	if (MusicVolumeTextBlock)
+	{
+		int32 VolumePercent = FMath::RoundToInt(Value * 100.0f);
+		MusicVolumeTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Music Volume: %d%%"), VolumePercent)));
 	}
 }
 
@@ -84,19 +76,17 @@ void UAudioWidget::SetSettingsManager(USettingsManager* InSettingsManager)
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("AudioWidget: SettingsManager assigned"));
-
-	if (MasterVolumeTextBlock)
+	
+	if (MasterVolumeSlider)
 	{
-		MasterVolumeTextBlock->SetText(FText::FromString(TEXT("Master Volume: 50%")));
+		MasterVolumeSlider->SetValue(SettingsManager->GetMasterVolume());
 	}
-
-	if (SFXVolumeTextBlock)
+	if (MusicVolumeSlider)
 	{
-		SFXVolumeTextBlock->SetText(FText::FromString(TEXT("SFX Volume: 50%")));
+		MusicVolumeSlider->SetValue(SettingsManager->GetMusicVolume());
 	}
-
-	if (MusicVolumeTextBlock)
+	if (SFXVolumeSlider)
 	{
-		MusicVolumeTextBlock->SetText(FText::FromString(TEXT("Music Volume: 50%")));
+		SFXVolumeSlider->SetValue(SettingsManager->GetSfxVolume());
 	}
 }

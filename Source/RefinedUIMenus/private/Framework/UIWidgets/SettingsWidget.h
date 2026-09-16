@@ -34,6 +34,8 @@ public:
 	UFUNCTION() void SetSettingsManager(USettingsManager* NewSettingsManager);
 
 	UFUNCTION() void OnBackButtonPressed();
+	UFUNCTION() void OnApplyButtonClicked();
+
 	
 	UFUNCTION() void OnGeneralClicked();
 	UFUNCTION() void OnGraphicsClicked();
@@ -45,6 +47,7 @@ private:
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UOverlay> ComponentHoldersOverlay;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UBorder> SettingsBackground;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> BackButton;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> ApplyButton;
 	
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> GeneralButton;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> GraphicsButton;

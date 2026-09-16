@@ -51,6 +51,10 @@ void USettingsWidget::NativeOnInitialized()
 	{
 		ControlsButton->OnClicked.AddDynamic(this, &USettingsWidget::OnControlsClicked);
 	}
+	if (ApplyButton)
+	{
+		ApplyButton->OnClicked.AddDynamic(this, &USettingsWidget::OnApplyButtonClicked);
+	}
 }
 
 void USettingsWidget::SetSettingsManager(USettingsManager* NewSettingManager)
@@ -69,6 +73,15 @@ void USettingsWidget::OnBackButtonPressed()
 	if (SettingsManager)
 	{
 		SettingsManager->GoBack();
+	}
+}
+
+void USettingsWidget::OnApplyButtonClicked()
+{
+	if (SettingsManager)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Apply settings button has been clicked"));
+		SettingsManager->ApplySettings();
 	}
 }
 

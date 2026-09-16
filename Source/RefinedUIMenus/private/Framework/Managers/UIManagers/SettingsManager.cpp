@@ -4,23 +4,25 @@
 #include "Framework/Managers/UIManagers/SettingsManager.h"
 #include "MainMenuManager.h"
 #include "Components/WidgetSwitcher.h"
+#include "Framework/Managers/SavingManager/SettingsSaveManager.h"
 #include "Framework/UIWidgets/SettingsWidget.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Kismet/GameplayStatics.h"
 
+//these set the variables to the loaded version
 void USettingsManager::SetMasterVolume(float Value)
 {
-	MasterVolume = Value;
+	MasterVolumeChanged(Value);
 }
 
 void USettingsManager::SetMusicVolume(float Value)
 {
-	MusicVolume = Value;
+	MusicVolumeChanged(Value);
 }
 
 void USettingsManager::SetSfxVolume(float Value)
 {
-	SFXVolume = Value;
+	SFXVolumeChanged(Value);
 }
 
 void USettingsManager::SetFullscreen(bool Enabled)
@@ -49,7 +51,6 @@ void USettingsManager::Initialize(APlayerController* InPlayerController, TSubcla
 
 		UE_LOG(LogTemp, Warning, TEXT("Settings Sound Mix Activated"));
 	}
-	ChangefullScreen(bIsFullscreen); //changing to fullscreen on init
 }
 
 void USettingsManager::SetSettingsWidget(USettingsWidget* InSettingsWidget)
@@ -69,6 +70,11 @@ void USettingsManager::SetMainMenuManager(UMainMenuManager* InMainMenuManager)
 	MainMenuManager = InMainMenuManager;
 }
 
+void USettingsManager::SetSettingsSaveManager(USettingsSaveManager* InSettingsSaveManager)
+{
+	SaveManager = InSettingsSaveManager;
+}
+
 bool USettingsManager::Validate() const
 {
 	if (!PlayerController)
@@ -86,38 +92,43 @@ bool USettingsManager::Validate() const
 
 void USettingsManager::OpenGeneral()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Opening General"));
 	SetState(ESettingsMenuStates::General);
 }
 
 void USettingsManager::OpenGraphics()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Opening Graphics"));
 	SetState(ESettingsMenuStates::Graphics);
 }
 
 void USettingsManager::OpenAudio()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Opening Audio"));
 	SetState(ESettingsMenuStates::Audio);
 }
 
 void USettingsManager::OpenControls()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Opening Controls"));
 	SetState(ESettingsMenuStates::Controls);
 }
 
 void USettingsManager::GoBack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Exitting Settings"));
-	
 	if (!MainMenuManager)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No main menu ref"));
 		return;
 	}
 	MainMenuManager->OpenMainMenu();
+}
+
+void USettingsManager::ApplySettings()
+{
+	UE_LOG(LogTemp, Log, TEXT("Apply settings has NOT reached the save settings"));
+	if (SaveManager)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Apply settings has reached the save settings"));
+
+		SaveManager->SaveSettings();
+	}
 }
 
 void USettingsManager::MasterVolumeChanged(float Volume)
@@ -143,8 +154,6 @@ void USettingsManager::MasterVolumeChanged(float Volume)
 	}
 
 	UGameplayStatics::SetSoundMixClassOverride(PlayerController,SettingsSoundMix,MasterSoundClass,MasterVolume,1.0f,0.0f,true);
-
-	UE_LOG(LogTemp,Warning,TEXT("Master Volume Changed: %f"),MasterVolume);
 }
 
 void USettingsManager::SFXVolumeChanged(float Volume)
@@ -170,8 +179,6 @@ void USettingsManager::SFXVolumeChanged(float Volume)
 	}
 
 	UGameplayStatics::SetSoundMixClassOverride(PlayerController,SettingsSoundMix,SFXSoundClass,SFXVolume,1.0f,0.0f,false);
-
-	UE_LOG(LogTemp,Warning,TEXT("SFX Volume Changed: %f"),SFXVolume);
 }
 
 void USettingsManager::MusicVolumeChanged(float Volume)
@@ -189,8 +196,6 @@ void USettingsManager::MusicVolumeChanged(float Volume)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Cannot change Music Volume: No Music Sound Class")); return;
 	} 
-	
-	UE_LOG(LogTemp, Warning, TEXT("SETTING MUSIC VOLUME TO: %f"), Volume);
 	
 	UGameplayStatics::SetSoundMixClassOverride( PlayerController, SettingsSoundMix, MusicSoundClass, MusicVolume, 1.0f, 0.0f, false ); 
 }
@@ -213,8 +218,6 @@ void USettingsManager::ChangefullScreen(bool IsInFullscreen)
 	}
 	
 	GameSettings->ApplyResolutionSettings(false);
-	
-	UE_LOG(LogTemp, Warning, TEXT("Changed Window Mode: %s"), IsInFullscreen ? TEXT("Fullscreen") : TEXT("Windowed"));
 }
 
 ESettingsMenuStates USettingsManager::GetCurrentState() const
@@ -241,8 +244,6 @@ void USettingsManager::ApplyState()
 	{
 		return;
 	}
-	
-	UE_LOG(LogTemp, Warning, TEXT("Applying Settings"));
 	switch (CurrentState)
 	{
 		case ESettingsMenuStates::General:

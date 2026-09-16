@@ -12,6 +12,7 @@ void USettingsSaveManager::Initialize(USettingsManager* InSettingsManager)
 	SettingsManager = InSettingsManager;
 	
 	LoadSettings();
+	UE_LOG(LogTemp, Warning, TEXT("Saving manager init was called"))
 }
 
 void USettingsSaveManager::SaveSettings()
@@ -33,6 +34,7 @@ void USettingsSaveManager::SaveSettings()
 	SettingsSaveGame->bFullscreen = SettingsManager->GetFullscreen();
 	
 	UGameplayStatics::SaveGameToSlot(SettingsSaveGame, SaveSlotName, 0);
+	UE_LOG(LogTemp, Warning, TEXT("Saving manager called its Save settings function"))
 }
 
 void USettingsSaveManager::LoadSettings()
@@ -52,8 +54,13 @@ void USettingsSaveManager::LoadSettings()
 	{
 		return;
 	}
+
 	SettingsManager->SetMasterVolume(SettingsSaveGame->MasterVolume);
 	SettingsManager->SetMusicVolume(SettingsSaveGame->MusicVolume);
 	SettingsManager->SetSfxVolume(SettingsSaveGame->SFXVolume);
-	SettingsManager->SetFullscreen(SettingsSaveGame->bFullscreen);
+	SettingsManager->ChangefullScreen(SettingsSaveGame->bFullscreen);
+	
+	UE_LOG(LogTemp, Warning, TEXT("Music Loaded: %f"), SettingsSaveGame->MusicVolume);
+	
+	UE_LOG(LogTemp, Warning, TEXT("Saving manager called its load settings function"))
 }
