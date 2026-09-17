@@ -16,6 +16,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "PlayerCamera/MainMenuCamera.h"
 #include "Framework/Application/SlateApplication.h"
+#include "Framework/UIWidgets/MainMenuWidget.h"
+#include "Framework/UIWidgets/WidgetComponents/AudioButtonBase.h"
 
 void AMainMenuPlayerController::BeginPlay()
 {
@@ -128,12 +130,4 @@ void AMainMenuPlayerController::TestNav(const FInputActionValue& Value)
 	{
 		return;
 	}
-
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("MENU NAVIGATION: X=%f Y=%f"),
-		Input.X,
-		Input.Y
-	);
 }

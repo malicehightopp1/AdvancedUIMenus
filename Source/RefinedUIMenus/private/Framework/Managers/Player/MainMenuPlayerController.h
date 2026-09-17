@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "MainMenuPlayerController.generated.h"
 
+class UWidget;
 class UInputMappingContext;
 struct FInputActionValue;
 class UUserWidget;

@@ -7,7 +7,6 @@
 #include "Components/Button.h"
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
 #include "WidgetComponents/AudioButtonBase.h"
-#include "WidgetComponents/ConfirmQuit.h"
 
 void UMainMenuWidget::NativeConstruct()
 {
@@ -19,8 +18,6 @@ void UMainMenuWidget::NativeConstruct()
 	SettingsButton->IsFocusable = true;
 	CreditsButton->IsFocusable = true;
 	QuitButton->IsFocusable = true;
-	
-	StartGameButton->SetKeyboardFocus();
 }
 
 bool UMainMenuWidget::Initialize() //this is running but not the text block
@@ -91,4 +88,14 @@ void UMainMenuWidget::OnCreditsClicked()
 void UMainMenuWidget::SetMainMenuManager(UMainMenuManager* NewMainMenuManager)
 {
 	MainMenuManager = NewMainMenuManager;
+}
+
+void UMainMenuWidget::FocusStartButton()
+{
+	if (StartGameButton)
+	{
+		StartGameButton->SetKeyboardFocus();
+		
+		UE_LOG(LogTemp, Warning, TEXT("Start button focus"))
+	}
 }

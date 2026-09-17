@@ -11,6 +11,7 @@
 #include "Framework/UIWidgets/MainMenuWidget.h"
 #include "Input/Reply.h"
 #include "Framework/UIWidgets/SettingsWidget.h"
+#include "Framework/UIWidgets/WidgetComponents/AudioButtonBase.h"
 #include "Framework/UIWidgets/WidgetComponents/ConfirmQuit.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -428,11 +429,11 @@ void UMainMenuManager::SetupUIInputMode()
 
 	if (CurrentState == EMainMenuState::Settings && SettingsWidget)
 	{
-		InputMode.SetWidgetToFocus(SettingsWidget->TakeWidget());
+		InputMode.SetWidgetToFocus(SettingsWidget->GeneralButton->TakeWidget());
 	}
 	else if (MainMenuWidget)
 	{
-		InputMode.SetWidgetToFocus(MainMenuWidget->TakeWidget());
+		InputMode.SetWidgetToFocus(MainMenuWidget->StartGameButton->TakeWidget());
 	}
 
 	InputMode.SetHideCursorDuringCapture(false);
@@ -440,10 +441,19 @@ void UMainMenuManager::SetupUIInputMode()
 	PlayerController->SetInputMode(InputMode);
 	PlayerController->bShowMouseCursor = true;
 	
-	if (CurrentState == EMainMenuState::Idle || CurrentState == EMainMenuState::Main)
+	if (CurrentState == EMainMenuState::Idle)
 	{
 		UE_LOG(LogTemp,Warning,TEXT("Input mode set to Idle"));
+		
 		MainMenuWidget->SetKeyboardFocus();
+	}
+	else if (CurrentState == EMainMenuState::Main)
+	{
+		MainMenuWidget->FocusStartButton();
+	}
+	else if (CurrentState == EMainMenuState::Settings)
+	{
+		SettingsWidget->SetGeneralButtonFocus();
 	}
 }
 

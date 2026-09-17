@@ -38,6 +38,8 @@ public:
 	UFUNCTION() void OnCreditsClicked();
 	UFUNCTION() void SetMainMenuManager(UMainMenuManager* NewMainMenuManager);
 	
+	UFUNCTION() void FocusStartButton();
+	
 	//=================================================//
 	//				Components
 	//=================================================//

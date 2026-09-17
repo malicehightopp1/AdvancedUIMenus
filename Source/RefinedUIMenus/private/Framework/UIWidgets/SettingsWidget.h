@@ -35,7 +35,8 @@ public:
 
 	UFUNCTION() void OnBackButtonPressed();
 	UFUNCTION() void OnApplyButtonClicked();
-
+	
+	UFUNCTION() void SetGeneralButtonFocus();
 	
 	UFUNCTION() void OnGeneralClicked();
 	UFUNCTION() void OnGraphicsClicked();
@@ -43,7 +44,6 @@ public:
 	UFUNCTION() void OnControlsClicked();
 	
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UWidgetSwitcher> PanelSwitcher;  //settings manager is using this
-private:
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UOverlay> ComponentHoldersOverlay;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UBorder> SettingsBackground;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> BackButton;
@@ -59,5 +59,6 @@ private:
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioWidget> AudioWidget;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UGeneralWidget> GeneralWidget ;
 
+private:
 	UPROPERTY() TObjectPtr<USettingsManager> SettingsManager; 
 };

@@ -15,11 +15,10 @@ class UAudioButtonBase : public UButton
 	GENERATED_BODY()
 	
 public:
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")USoundBase* ClickSound;
 
+	UFUNCTION()void SetControllerFocus(bool bIsFocused);
 protected:
-
 	virtual void PostLoad() override;
 
 	virtual void PostInitProperties() override;
@@ -27,6 +26,7 @@ protected:
 	UFUNCTION()void OnButtonHovered();
 
 	UFUNCTION()void OnButtonUnhovered();
+	
 
 private:
 

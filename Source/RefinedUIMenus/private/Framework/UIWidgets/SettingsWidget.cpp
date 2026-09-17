@@ -34,26 +34,32 @@ void USettingsWidget::NativeOnInitialized()
 	if(BackButton)
 	{
 		BackButton->OnClicked.AddDynamic(this, &USettingsWidget::OnBackButtonPressed);
+		BackButton->IsFocusable = true;
 	}
 	if (GeneralButton)
 	{
 		GeneralButton->OnClicked.AddDynamic(this, &USettingsWidget::OnGeneralClicked);
+		GeneralButton->IsFocusable = true;
 	}
 	if (GraphicsButton)
 	{
 		GraphicsButton->OnClicked.AddDynamic(this, &USettingsWidget::OnGraphicsClicked);
+		GraphicsButton->IsFocusable = true;
 	}
 	if (AudioButton)
 	{
 		AudioButton->OnClicked.AddDynamic(this, &USettingsWidget::OnAudioClicked);
+		AudioButton->IsFocusable = true;
 	}
 	if (ControlsButton)
 	{
 		ControlsButton->OnClicked.AddDynamic(this, &USettingsWidget::OnControlsClicked);
+		ControlsButton->IsFocusable = true;
 	}
 	if (ApplyButton)
 	{
 		ApplyButton->OnClicked.AddDynamic(this, &USettingsWidget::OnApplyButtonClicked);
+		ApplyButton->IsFocusable = true;
 	}
 }
 
@@ -82,6 +88,15 @@ void USettingsWidget::OnApplyButtonClicked()
 	{
 		UE_LOG(LogTemp, Log, TEXT("Apply settings button has been clicked"));
 		SettingsManager->ApplySettings();
+	}
+}
+
+void USettingsWidget::SetGeneralButtonFocus()
+{
+	if (GeneralButton)
+	{
+		GeneralButton->SetKeyboardFocus();
+		UE_LOG(LogTemp, Log, TEXT("General button has been focused"));
 	}
 }
 

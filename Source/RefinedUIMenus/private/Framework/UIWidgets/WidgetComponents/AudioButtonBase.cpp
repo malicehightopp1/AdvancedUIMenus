@@ -31,6 +31,18 @@ void UAudioButtonBase::OnButtonUnhovered()
 	SetRenderScale(FVector2D(1.0f, 1.0f));
 }
 
+void UAudioButtonBase::SetControllerFocus(bool bIsFocused)
+{
+	if (bIsFocused)
+	{
+		OnButtonHovered();
+	}
+	else
+	{
+		OnButtonUnhovered();
+	}
+}
+
 void UAudioButtonBase::PlayClickSound()
 {
 	if (!ClickSound)
