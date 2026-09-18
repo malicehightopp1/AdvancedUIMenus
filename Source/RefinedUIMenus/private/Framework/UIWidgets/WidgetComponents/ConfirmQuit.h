@@ -23,6 +23,8 @@ public:
 	UFUNCTION() void OnYesClicked();
 	UFUNCTION() void OnNoClicked();
 	
+	UFUNCTION() void FocusYesButton();
+	
 	UFUNCTION() void SetMainMenuManager(UMainMenuManager* NewMainMenuManager);
 	
 	UPROPERTY()TObjectPtr<UMainMenuManager> MainMenuManager;;

@@ -14,7 +14,9 @@ class UAudioButtonBase : public UButton
 {
 	GENERATED_BODY()
 	
+	UAudioButtonBase(const FObjectInitializer& ObjectInitializer);
 public:
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")USoundBase* ClickSound;
 
 	UFUNCTION()void SetControllerFocus(bool bIsFocused);
@@ -27,8 +29,13 @@ protected:
 
 	UFUNCTION()void OnButtonUnhovered();
 	
-
+	UFUNCTION() void OnButtonReceivedFocus();
+	UFUNCTION() void OnButtonLostFocus();
+	
 private:
 
 	UFUNCTION()void PlayClickSound();
+	
+	UPROPERTY(EditAnywhere, Category = "Color") FLinearColor NormalColor = FLinearColor::White;
+	UPROPERTY(EditAnywhere, Category = "Color") FLinearColor FocusColor = FLinearColor::Gray;
 };

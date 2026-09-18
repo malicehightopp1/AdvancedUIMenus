@@ -16,6 +16,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "PlayerCamera/MainMenuCamera.h"
 #include "Framework/Application/SlateApplication.h"
+#include "Framework/Managers/UIManagers/InputMappingManager.h"
 #include "Framework/UIWidgets/MainMenuWidget.h"
 #include "Framework/UIWidgets/WidgetComponents/AudioButtonBase.h"
 
@@ -83,6 +84,14 @@ void AMainMenuPlayerController::BeginPlay()
 			}
 		}
 	}
+	
+	UInputMappingManager* InputManager = Services->GetInputMappingManager();
+	if (!InputManager)
+	{
+		return;
+	}
+	
+	InputManager->Initialize(this, RemappingContext);
 }
 
 void AMainMenuPlayerController::SetupInputComponent()

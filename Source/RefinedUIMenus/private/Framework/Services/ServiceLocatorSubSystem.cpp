@@ -6,6 +6,7 @@
 #include "Framework/Managers/Player/PlayerCamera/MainMenuCamera.h"
 #include "Framework/Managers/SavingManager/SettingsSaveGame.h"
 #include "Framework/Managers/SavingManager/SettingsSaveManager.h"
+#include "Framework/Managers/UIManagers/InputMappingManager.h"
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
 #include "Framework/Managers/UIManagers/SettingsManager.h"
 
@@ -16,6 +17,7 @@ void UServiceLocatorSubSystem::Initialize(FSubsystemCollectionBase& Collection)
 	MainMenuManager = NewObject<UMainMenuManager>(this); //creating the main menu manager, "this" is basically saying that the service locator owns the manager
 	SettingsManager = NewObject<USettingsManager>(this);
 	SettingsSaveManager = NewObject<USettingsSaveManager>(this);
+	InputMappingManager = NewObject<UInputMappingManager>(this);
 	
 	SettingsSaveManager->Initialize(SettingsManager);
 	SettingsManager->SetSettingsSaveManager(SettingsSaveManager);
@@ -30,6 +32,7 @@ void UServiceLocatorSubSystem::Deinitialize()
 	MainMenuManager = nullptr;
 	SettingsManager = nullptr;
 	SettingsSaveManager = nullptr;
+	InputMappingManager = nullptr;
 	
 	UE_LOG(LogTemp, Warning, TEXT("Service locator DeInitilized"))
 }
@@ -68,5 +71,10 @@ USettingsManager* UServiceLocatorSubSystem::GetSettingsManager() const
 USettingsSaveManager* UServiceLocatorSubSystem::GetSettingsSaveManager() const
 {
 	return SettingsSaveManager;
+}
+
+UInputMappingManager* UServiceLocatorSubSystem::GetInputMappingManager() const
+{
+	return InputMappingManager;
 }
 #pragma endregion Getters

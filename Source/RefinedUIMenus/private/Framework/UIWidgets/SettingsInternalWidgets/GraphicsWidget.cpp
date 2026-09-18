@@ -18,6 +18,8 @@ void UGraphicsWidget::NativeConstruct()
 		WindowModeComboBox->AddOption(TEXT("Fullscreen"));
 		
 		WindowModeComboBox->OnSelectionChanged.AddDynamic(this, &UGraphicsWidget::OnWindowModeChanged);
+		
+		WindowModeComboBox->bIsFocusable = true;
 	}
 }
 

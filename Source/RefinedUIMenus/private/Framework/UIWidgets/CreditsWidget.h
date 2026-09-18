@@ -22,6 +22,8 @@ class UCreditsWidget : public UUserWidget
 public:
 	virtual void NativeOnInitialized() override;
 	
+	UFUNCTION() void FocusBackButton();
+	
 	UFUNCTION() void SetMainMenuManager(UMainMenuManager* InMainMenuManager);
 
 	UFUNCTION() void OnBackButtonPressed();

@@ -13,10 +13,12 @@ void UConfirmQuit::NativeConstruct()
 	if (QuitButtonYes)
 	{
 		QuitButtonYes->OnClicked.AddDynamic(this, &UConfirmQuit::OnYesClicked);
+		QuitButtonYes->IsFocusable = true;
 	}
 	if (QuitButtonNo)
 	{
 		QuitButtonNo->OnClicked.AddDynamic(this, &UConfirmQuit::OnNoClicked);
+		QuitButtonNo->IsFocusable = true;
 	}
 }
 
@@ -33,6 +35,14 @@ void UConfirmQuit::OnNoClicked()
 	if (MainMenuManager)
 	{
 		MainMenuManager->CloseConfirmQuitMenu();
+	}
+}
+
+void UConfirmQuit::FocusYesButton()
+{
+	if (QuitButtonYes)
+	{
+		QuitButtonYes->SetKeyboardFocus();
 	}
 }
 

@@ -201,7 +201,7 @@ void UMainMenuManager::OpenConfirmQuitMenu()
 	{
 		return;
 	}
-	ConfirmQuit->SetVisibility(ESlateVisibility::Visible);
+	SetState(EMainMenuState::Quitting);
 }
 
 void UMainMenuManager::CloseConfirmQuitMenu()
@@ -210,7 +210,7 @@ void UMainMenuManager::CloseConfirmQuitMenu()
 	{
 		return;
 	}
-	ConfirmQuit->SetVisibility(ESlateVisibility::Hidden);
+	SetState(EMainMenuState::Main);
 }
 
 void UMainMenuManager::QuitGame()
@@ -350,6 +350,72 @@ void UMainMenuManager::SetState(EMainMenuState NewState)
 
 void UMainMenuManager::ApplyState()
 {
+	ApplyVisualState();
+	UpdateInputMode();
+}
+
+EMainMenuState UMainMenuManager::GetCurrentState() const
+{
+	return CurrentState;
+}
+#pragma endregion
+
+#pragma region Input Management
+void UMainMenuManager::UpdateInputMode()
+{
+	switch (CurrentState)
+	{
+	case EMainMenuState::Main:
+		SetupMainMenuInput();
+		break;
+	case EMainMenuState::Credits:
+		SetupCreditsInput();
+		break;
+	case EMainMenuState::Settings:
+		SetupSettingsInput();
+		break;
+	case EMainMenuState::Playing:
+		SetupGameInputMode();
+		break;
+	case EMainMenuState::Quitting:
+		SetupConfirmQuitInput();
+		break;
+		
+	default:
+		break;
+	}
+}
+
+//Base input setup
+void UMainMenuManager::SetupUIInputMode()
+{
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Input mode set to UI"));
+
+	FInputModeGameAndUI InputMode;
+
+	InputMode.SetHideCursorDuringCapture(false);
+	
+	PlayerController->SetInputMode(InputMode);
+	PlayerController->bShowMouseCursor = true;
+}
+
+void UMainMenuManager::SetupGameInputMode()
+{
+	UE_LOG(LogTemp,Warning,TEXT("Input mode set to Game"));
+
+	FInputModeGameOnly InputMode;
+	
+	PlayerController->SetInputMode(InputMode);
+	PlayerController->bShowMouseCursor = false;
+}
+
+void UMainMenuManager::ApplyVisualState()
+{
 	if (!MainMenuWidget || !SettingsWidget)
 	{
 		return;
@@ -368,6 +434,7 @@ void UMainMenuManager::ApplyState()
 		MainMenuWidget->SetVisibility(ESlateVisibility::Visible);
 		SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
 		CreditsWidget->SetVisibility(ESlateVisibility::Hidden);
+		ConfirmQuit->SetVisibility(ESlateVisibility::Hidden);
 		MainMenuWidget->PanelSwitcher->SetActiveWidgetIndex(1);
 		break;
 	case EMainMenuState::Settings:
@@ -381,89 +448,55 @@ void UMainMenuManager::ApplyState()
 		CreditsWidget->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	case EMainMenuState::Credits:
-		UE_LOG(LogTemp, Warning, TEXT("Set state to credits"))
 		MainMenuWidget->SetVisibility(ESlateVisibility::Hidden);
 		SettingsWidget->SetVisibility(ESlateVisibility::Hidden);
 		CreditsWidget->SetVisibility(ESlateVisibility::Visible);
 		break;
+	case EMainMenuState::Quitting:
+		ConfirmQuit->SetVisibility(ESlateVisibility::Visible);
 		
 	default:
 		break;
 	}
-	UpdateInputMode();
 }
 
-EMainMenuState UMainMenuManager::GetCurrentState() const
+void UMainMenuManager::SetupMainMenuInput()
 {
-	return CurrentState;
-}
-#pragma endregion
-
-#pragma region Input Management
-void UMainMenuManager::UpdateInputMode()
-{
-	if (!PlayerController)
-	{
-		return;
-	}
-	if (CurrentState == EMainMenuState::Main || CurrentState == EMainMenuState::Settings || CurrentState == EMainMenuState::Credits || CurrentState == EMainMenuState::Idle)
-	{
-		SetupUIInputMode();
-	}
-	else //if in play mode 
-	{
-		SetupGameInputMode();
-	}
-}
-
-void UMainMenuManager::SetupUIInputMode()
-{
-	if (!PlayerController)
-	{
-		return;
-	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Input mode set to UI"));
-
-	FInputModeGameAndUI InputMode;
-
-	if (CurrentState == EMainMenuState::Settings && SettingsWidget)
-	{
-		InputMode.SetWidgetToFocus(SettingsWidget->GeneralButton->TakeWidget());
-	}
-	else if (MainMenuWidget)
-	{
-		InputMode.SetWidgetToFocus(MainMenuWidget->StartGameButton->TakeWidget());
-	}
-
-	InputMode.SetHideCursorDuringCapture(false);
+	SetupUIInputMode();
 	
-	PlayerController->SetInputMode(InputMode);
-	PlayerController->bShowMouseCursor = true;
-	
-	if (CurrentState == EMainMenuState::Idle)
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Input mode set to Idle"));
-		
-		MainMenuWidget->SetKeyboardFocus();
-	}
-	else if (CurrentState == EMainMenuState::Main)
+	if (MainMenuWidget)
 	{
 		MainMenuWidget->FocusStartButton();
 	}
-	else if (CurrentState == EMainMenuState::Settings)
+}
+
+void UMainMenuManager::SetupCreditsInput()
+{
+	SetupUIInputMode();
+	
+	if (CreditsWidget)
 	{
-		SettingsWidget->SetGeneralButtonFocus();
+		CreditsWidget->FocusBackButton();
 	}
 }
 
-void UMainMenuManager::SetupGameInputMode()
+void UMainMenuManager::SetupConfirmQuitInput()
 {
-	UE_LOG(LogTemp,Warning,TEXT("Input mode set to Game"));
-
-	FInputModeGameOnly InputMode;
+	SetupUIInputMode();
 	
-	PlayerController->SetInputMode(InputMode);
-	PlayerController->bShowMouseCursor = false;
+	if (ConfirmQuit)
+	{
+		ConfirmQuit->FocusYesButton();
+	}
+}
+
+void UMainMenuManager::SetupSettingsInput()
+{
+	SetupUIInputMode();
+	
+	if (SettingsWidget)
+	{
+		SettingsWidget->SetGeneralButtonFocus();
+	}
 }
 #pragma endregion

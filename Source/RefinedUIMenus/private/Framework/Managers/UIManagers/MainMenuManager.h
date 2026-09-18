@@ -21,7 +21,8 @@ enum class EMainMenuState : uint8
 	Playing,
 	Main,
 	Settings,
-	Credits
+	Credits,
+	Quitting
 };
 
 UCLASS()
@@ -75,6 +76,13 @@ private:
 	void UpdateInputMode();
 	void SetupUIInputMode();
 	void SetupGameInputMode();
+	
+	void ApplyVisualState();
+	
+	void SetupMainMenuInput();
+	void SetupCreditsInput();
+	void SetupConfirmQuitInput();
+	void SetupSettingsInput();
 	
 	// =========================================================
 	// Context

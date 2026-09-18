@@ -27,6 +27,7 @@ class AMainMenuPlayerController : public APlayerController
 	void TestNav(const FInputActionValue& Value);
 
 
+	UPROPERTY(EditAnywhere, Category = "Input") UInputMappingContext* RemappingContext;
 	UPROPERTY(EditDefaultsOnly, Category = "Input") UInputMappingContext* ControllerMappingContext;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Input") UInputAction* ControllerCurorAction;

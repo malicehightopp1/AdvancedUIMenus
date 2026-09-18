@@ -4,7 +4,6 @@
 #include "Framework/UIWidgets/CreditsWidget.h"
 
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
-#include "Framework/Managers/UIManagers/SettingsManager.h"
 #include "WidgetComponents/AudioButtonBase.h"
 
 void UCreditsWidget::NativeOnInitialized()
@@ -13,6 +12,15 @@ void UCreditsWidget::NativeOnInitialized()
 	if(BackButton)
 	{
 		BackButton->OnClicked.AddDynamic(this, &UCreditsWidget::OnBackButtonPressed);
+		BackButton->IsFocusable = true;
+	}
+}
+
+void UCreditsWidget::FocusBackButton()
+{
+	if (BackButton)
+	{
+		BackButton->SetKeyboardFocus();
 	}
 }
 
