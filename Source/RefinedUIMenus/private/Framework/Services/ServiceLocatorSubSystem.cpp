@@ -3,6 +3,7 @@
 
 #include "Framework/Services/ServiceLocatorSubSystem.h"
 
+#include "Framework/Managers/InputManagers/InputDeviceManager.h"
 #include "Framework/Managers/Player/PlayerCamera/MainMenuCamera.h"
 #include "Framework/Managers/SavingManager/SettingsSaveGame.h"
 #include "Framework/Managers/SavingManager/SettingsSaveManager.h"
@@ -18,11 +19,11 @@ void UServiceLocatorSubSystem::Initialize(FSubsystemCollectionBase& Collection)
 	SettingsManager = NewObject<USettingsManager>(this);
 	SettingsSaveManager = NewObject<USettingsSaveManager>(this);
 	InputMappingManager = NewObject<UInputMappingManager>(this);
+	InputDeviceManager = NewObject<UInputDeviceManager>(this);
 	
 	SettingsSaveManager->Initialize(SettingsManager);
 	SettingsManager->SetSettingsSaveManager(SettingsSaveManager);
-	
-	UE_LOG(LogTemp, Warning, TEXT("Service locator initilized"))
+	InputDeviceManager->Initialize();
 }
 
 void UServiceLocatorSubSystem::Deinitialize()
@@ -33,8 +34,6 @@ void UServiceLocatorSubSystem::Deinitialize()
 	SettingsManager = nullptr;
 	SettingsSaveManager = nullptr;
 	InputMappingManager = nullptr;
-	
-	UE_LOG(LogTemp, Warning, TEXT("Service locator DeInitilized"))
 }
 
 UServiceLocatorSubSystem* UServiceLocatorSubSystem::Get(const UObject* WorldContextObject)
@@ -76,5 +75,10 @@ USettingsSaveManager* UServiceLocatorSubSystem::GetSettingsSaveManager() const
 UInputMappingManager* UServiceLocatorSubSystem::GetInputMappingManager() const
 {
 	return InputMappingManager;
+}
+
+UInputDeviceManager* UServiceLocatorSubSystem::GetInputDeviceManager() const
+{
+	return InputDeviceManager;
 }
 #pragma endregion Getters

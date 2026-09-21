@@ -74,6 +74,16 @@ void USettingsWidget::SetSettingsManager(USettingsManager* NewSettingManager)
 	}
 }
 
+void USettingsWidget::SetInputMappingManager(UInputMappingManager* NewInputMappingManager)
+{
+	InputMappingManager = NewInputMappingManager;
+}
+
+UControlsWidget* USettingsWidget::GetControlsWidget() const
+{
+	return ControlsWidget;
+}
+
 void USettingsWidget::OnBackButtonPressed()
 {
 	if (SettingsManager)

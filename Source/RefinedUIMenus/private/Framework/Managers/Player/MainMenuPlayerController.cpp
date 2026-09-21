@@ -16,6 +16,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "PlayerCamera/MainMenuCamera.h"
 #include "Framework/Application/SlateApplication.h"
+#include "Framework/Managers/InputManagers/InputDeviceManager.h"
 #include "Framework/Managers/UIManagers/InputMappingManager.h"
 #include "Framework/UIWidgets/MainMenuWidget.h"
 #include "Framework/UIWidgets/WidgetComponents/AudioButtonBase.h"
@@ -92,6 +93,7 @@ void AMainMenuPlayerController::BeginPlay()
 	}
 	
 	InputManager->Initialize(this, RemappingContext);
+	MenuManager->SetInputMappingManager(InputManager);
 }
 
 void AMainMenuPlayerController::SetupInputComponent()
@@ -124,6 +126,37 @@ void AMainMenuPlayerController::HandleAnyKey()
 	{
 		MenuManager->PressAnyKey();
 	}
+}
+
+bool AMainMenuPlayerController::InputKey(const FInputKeyEventArgs& Params)
+{
+	if (Params.Event == IE_Pressed)
+	{
+		UServiceLocatorSubSystem* Services =
+			UServiceLocatorSubSystem::Get(this);
+
+		if (Services)
+		{
+			UInputDeviceManager* InputDeviceManager =
+				Services->GetInputDeviceManager();
+
+			if (InputDeviceManager)
+			{
+				InputDeviceManager->ProcessInputDevice(Params.Key);
+			}
+			else
+			{
+				UE_LOG(
+					LogTemp,
+					Error,
+					TEXT("InputDeviceManager is NULL!")
+				);
+			}
+		}
+	}
+
+	return Super::InputKey(Params);
+	
 }
 
 void AMainMenuPlayerController::AccpetMenuCursor(const FInputActionValue& Value)

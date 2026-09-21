@@ -11,6 +11,7 @@
 #include "Framework/UIWidgets/MainMenuWidget.h"
 #include "Input/Reply.h"
 #include "Framework/UIWidgets/SettingsWidget.h"
+#include "Framework/UIWidgets/SettingsInternalWidgets/ControlsWidget.h"
 #include "Framework/UIWidgets/WidgetComponents/AudioButtonBase.h"
 #include "Framework/UIWidgets/WidgetComponents/ConfirmQuit.h"
 #include "Kismet/GameplayStatics.h"
@@ -316,6 +317,13 @@ void UMainMenuManager::TransitionCamera(EMainMenuState NewState)
 		
 		break;
 	}
+}
+
+void UMainMenuManager::SetInputMappingManager(UInputMappingManager* InInputMappingManager)
+{
+	UControlsWidget* ControlsWidget = SettingsWidget->GetControlsWidget();
+	
+	ControlsWidget->SetInputMappingManager(InInputMappingManager);
 }
 
 void UMainMenuManager::OnCameraTransitionFinished()

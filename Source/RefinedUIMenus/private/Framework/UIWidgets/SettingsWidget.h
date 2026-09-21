@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "SettingsWidget.generated.h"
 
+class UInputMappingManager;
+class UKeyRemappingWidget;
 class UAudioButtonBase;
 class USettingsManager;
 class UTextBlock;
@@ -32,7 +34,9 @@ public:
 	virtual void NativeOnInitialized() override;
 	
 	UFUNCTION() void SetSettingsManager(USettingsManager* NewSettingsManager);
+	UFUNCTION() void SetInputMappingManager(UInputMappingManager* NewInputMappingManager);
 
+	UFUNCTION() UControlsWidget* GetControlsWidget() const;
 	UFUNCTION() void OnBackButtonPressed();
 	UFUNCTION() void OnApplyButtonClicked();
 	
@@ -61,4 +65,6 @@ public:
 
 private:
 	UPROPERTY() TObjectPtr<USettingsManager> SettingsManager; 
+	UPROPERTY() TObjectPtr<UKeyRemappingWidget> KeyRemappingWidget;
+	UPROPERTY() TObjectPtr<UInputMappingManager> InputMappingManager; 
 };

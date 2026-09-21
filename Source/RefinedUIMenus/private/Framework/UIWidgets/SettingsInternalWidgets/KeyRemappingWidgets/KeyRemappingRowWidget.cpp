@@ -5,6 +5,8 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "InputAction.h"
+#include "Components/Image.h"
+#include "Framework/Managers/InputManagers/InputIconData.h"
 #include "Framework/Managers/UIManagers/InputMappingManager.h"
 
 void UKeyRemappingRowWidget::NativeConstruct()
@@ -12,7 +14,6 @@ void UKeyRemappingRowWidget::NativeConstruct()
     Super::NativeConstruct();
 
     SetIsFocusable(true);
-
     if (ChangeButton)
     {
         ChangeButton->OnClicked.AddUniqueDynamic(
@@ -48,6 +49,15 @@ void UKeyRemappingRowWidget::SetMappingName(FName InMappingName)
     RefreshCurrentKey();
 }
 
+void UKeyRemappingRowWidget::SetInputDeviceIcon(UTexture2D* IconTexture)
+{
+    if (!RemappingIcon || !IconTexture)
+    {
+        return;
+    }
+    RemappingIcon->SetBrushFromTexture(IconTexture);
+}
+
 void UKeyRemappingRowWidget::SetRemappingManager(UInputMappingManager* InRemappingManager)
 {
     RemappingManager = InRemappingManager;
@@ -55,20 +65,58 @@ void UKeyRemappingRowWidget::SetRemappingManager(UInputMappingManager* InRemappi
     RefreshCurrentKey();
 }
 
+void UKeyRemappingRowWidget::SetInputIconData(UInputIconData* InInputIconData)
+{
+    InputIcon = InInputIconData;
+    
+    RefreshCurrentKey();
+}
+
 void UKeyRemappingRowWidget::RefreshCurrentKey()
 {
-    if (!CurrentKeyText || !RemappingManager || MappingName.IsNone())
+    if (!RemappingManager || MappingName.IsNone())
     {
         return;
     }
 
     FKey CurrentKey;
 
-    if (RemappingManager->GetCurrentKey(MappingName, CurrentKey))
+    if (!RemappingManager->GetCurrentKey(MappingName,CurrentKey))
     {
-        CurrentKeyText->SetText(
-            CurrentKey.GetDisplayName(false));
+        return;
     }
+
+    if (RemappingIcon && InputIcon)
+    {
+        UTexture2D* IconTexture =
+            FindIconForKey(CurrentKey);
+
+        if (IconTexture)
+        {
+            RemappingIcon->SetBrushFromTexture(IconTexture);
+        }
+        else
+        {
+            UE_LOG(LogTemp,Warning,TEXT("No icon found for key: %s"),*CurrentKey.ToString()
+            );
+        }
+    }
+}
+
+UTexture2D* UKeyRemappingRowWidget::FindIconForKey(const FKey& InKey)
+{
+    if (!InputIcon)
+    {
+        return nullptr;
+    }
+    for (const FInputIconEntry& Entry : InputIcon->Icons)
+    {
+        if (Entry.Key == InKey)
+        {
+            return Entry.Icon;
+        }
+    }
+    return nullptr;
 }
 
 void UKeyRemappingRowWidget::OnChangeButtonClicked()

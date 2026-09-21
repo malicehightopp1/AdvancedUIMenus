@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "KeyRemappingRowWidget.generated.h"
 
+class UInputIconData;
+class UImage;
 class UInputMappingManager;
 class UInputAction;
 class UButton;
@@ -32,9 +34,15 @@ public:
 
 	void SetMappingName(FName InMappingName);
 
+	void SetInputDeviceIcon(UTexture2D* IconTexture);
+	
 	void SetRemappingManager(UInputMappingManager* InRemappingManager);
 
+	void SetInputIconData(UInputIconData* InInputIconData);
+	
 	void RefreshCurrentKey();
+	
+	UTexture2D* FindIconForKey(const FKey& InKey);
 
 protected:
 
@@ -47,8 +55,6 @@ protected:
 
 	void ApplyNewKey(const FKey& NewKey);
 
-protected:
-
 	UPROPERTY()
 	TObjectPtr<UInputAction> InputAction;
 
@@ -60,9 +66,12 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))TObjectPtr<UTextBlock> ActionNameText;
 
-	UPROPERTY(meta = (BindWidget))TObjectPtr<UTextBlock> CurrentKeyText;
+	UPROPERTY(meta = (BindWidget))TObjectPtr<UImage> RemappingIcon;
 
 	UPROPERTY(meta = (BindWidget))TObjectPtr<UTextBlock> StatusText;
 
 	UPROPERTY(meta = (BindWidget))TObjectPtr<UButton> ChangeButton;
+	
+private:
+	UPROPERTY() TObjectPtr<UInputIconData> InputIcon;
 };

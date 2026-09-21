@@ -6,6 +6,7 @@
 #include "UObject/Object.h"
 #include "MainMenuManager.generated.h"
 
+class UInputMappingManager;
 class UConfirmQuit;
 class UCreditsWidget;
 class USettingsManager;
@@ -48,6 +49,8 @@ public:
 	void PressAnyKey();
 	
 	void TransitionCamera(EMainMenuState NewState);
+	
+	void SetInputMappingManager(UInputMappingManager* InInputMappingManager);
 	
 private:
 	// =========================================================

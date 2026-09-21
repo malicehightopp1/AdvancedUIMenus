@@ -6,6 +6,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "ServiceLocatorSubSystem.generated.h"
 
+class UInputDeviceManager;
 class AMainMenuCamera;
 class UMainMenuManager;
 class USettingsManager;
@@ -27,10 +28,12 @@ public:
 	USettingsManager* GetSettingsManager() const;
 	USettingsSaveManager* GetSettingsSaveManager() const;
 	UInputMappingManager* GetInputMappingManager() const;
+	UInputDeviceManager* GetInputDeviceManager() const;
 	
 private:
 	UPROPERTY() TObjectPtr<UMainMenuManager> MainMenuManager; //the service locator owns this reference
 	UPROPERTY() TObjectPtr<USettingsManager> SettingsManager;
 	UPROPERTY() TObjectPtr<USettingsSaveManager> SettingsSaveManager;
 	UPROPERTY() TObjectPtr<UInputMappingManager> InputMappingManager;
+	UPROPERTY() TObjectPtr<UInputDeviceManager> InputDeviceManager;
 };

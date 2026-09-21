@@ -22,6 +22,8 @@ class AMainMenuPlayerController : public APlayerController
 	virtual void SetupInputComponent() override;
 	void HandleAnyKey();
 	
+	virtual bool InputKey(const FInputKeyEventArgs& Params) override;
+	
 	//Controller Setup
 	void AccpetMenuCursor(const FInputActionValue& Value);
 	void TestNav(const FInputActionValue& Value);
