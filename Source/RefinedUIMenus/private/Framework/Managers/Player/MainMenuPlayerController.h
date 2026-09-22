@@ -27,6 +27,7 @@ class AMainMenuPlayerController : public APlayerController
 	//Controller Setup
 	void AccpetMenuCursor(const FInputActionValue& Value);
 	void TestNav(const FInputActionValue& Value);
+	void HandleBack();
 
 
 	UPROPERTY(EditAnywhere, Category = "Input") UInputMappingContext* RemappingContext;
@@ -34,5 +35,8 @@ class AMainMenuPlayerController : public APlayerController
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Input") UInputAction* ControllerCurorAction;
 	UPROPERTY(EditDefaultsOnly, Category = "Input") UInputAction* ControllerAcceptAction;
+	UPROPERTY(EditDefaultsOnly, Category = "Input") UInputAction* ControllerBackAction;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Input") UInputAction* KeyboardBackAction;
 
 };

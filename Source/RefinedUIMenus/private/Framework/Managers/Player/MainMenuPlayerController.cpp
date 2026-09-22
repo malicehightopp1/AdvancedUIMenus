@@ -111,6 +111,10 @@ void AMainMenuPlayerController::SetupInputComponent()
 
 	EnhancedInput->BindAction(ControllerCurorAction, ETriggerEvent::Triggered, this, &AMainMenuPlayerController::TestNav);
 	EnhancedInput->BindAction(ControllerAcceptAction, ETriggerEvent::Started, this, &AMainMenuPlayerController::AccpetMenuCursor);
+	EnhancedInput->BindAction(ControllerBackAction, ETriggerEvent::Triggered, this, &AMainMenuPlayerController::HandleBack);
+	
+	EnhancedInput->BindAction(KeyboardBackAction, ETriggerEvent::Triggered, this, &AMainMenuPlayerController::HandleBack);
+
 }
 
 //for begin idle state
@@ -171,5 +175,21 @@ void AMainMenuPlayerController::TestNav(const FInputActionValue& Value)
 	if (Input.IsNearlyZero())
 	{
 		return;
+	}
+}
+
+void AMainMenuPlayerController::HandleBack()
+{
+	UServiceLocatorSubSystem* Services = UServiceLocatorSubSystem::Get(this);
+	
+	if (!Services)
+	{
+		return;
+	}
+	UMainMenuManager* MenuManager = Services->GetMainMenuManager();
+	
+	if (MenuManager)
+	{
+		MenuManager->GoBack();
 	}
 }
