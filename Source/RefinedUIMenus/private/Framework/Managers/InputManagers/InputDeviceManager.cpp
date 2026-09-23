@@ -15,7 +15,6 @@ void UInputDeviceManager::ProcessInputDevice(const FKey& Key)
 	{
 		return;
 	}
-
 	EInputDeviceType NewDevice;
 
 	if (Key.IsGamepadKey())
@@ -38,3 +37,4 @@ void UInputDeviceManager::ProcessInputDevice(const FKey& Key)
 
 	OnInputDeviceChanged.Broadcast(NewDevice);
 }
+

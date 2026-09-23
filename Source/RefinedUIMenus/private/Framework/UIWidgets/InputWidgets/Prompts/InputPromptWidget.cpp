@@ -1,15 +1,32 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ // Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Framework/UIWidgets/InputWidgets/Prompts/InputPromptWidget.h"
-
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Framework/Managers/InputManagers/InputDeviceManager.h"
+#include "Framework/Services/ServiceLocatorSubSystem.h"
 
 void UInputPromptWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	UServiceLocatorSubSystem* ServiceLocatorSubSystem = UServiceLocatorSubSystem::Get(this);
+	if (!ServiceLocatorSubSystem)
+	{
+		return;
+	}
+	InputDeviceManager = ServiceLocatorSubSystem->GetInputDeviceManager();
+	
+	if (!InputDeviceManager)
+	{
+		return;
+	}
+	
+	InputDeviceManager->OnInputDeviceChanged.AddUObject(this, &UInputPromptWidget::InputDeviceChanged);
+	
+	CurrentDevice = InputDeviceManager->IsUsingController() ? EInputPromptDevice::Controller : EInputPromptDevice::Keyboard;
+	
 	RefreshPrompts();
 }
 
@@ -20,6 +37,7 @@ void UInputPromptWidget::SetInputDevice(EInputPromptDevice NewDevice)
 		return;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("Setting input device %hhd"), NewDevice);
 	CurrentDevice = NewDevice;
 
 	RefreshPrompts();
@@ -47,7 +65,7 @@ void UInputPromptWidget::SetAcceptPrompt(const FText& InText)
 
 void UInputPromptWidget::RefreshPrompts()
 {
-	const bool bUsingController =CurrentDevice == EInputPromptDevice::Controller;
+	const bool bUsingController = CurrentDevice == EInputPromptDevice::Controller;
 
 	if (BackKeyboardIcon)
 	{
@@ -79,3 +97,15 @@ void UInputPromptWidget::RefreshPrompts()
 		AcceptText->SetText(AcceptPromptText);
 	}
 }
+
+ void UInputPromptWidget::InputDeviceChanged(EInputDeviceType NewInputDevice)
+ {
+	if (NewInputDevice == EInputDeviceType::Controller)
+	{
+		SetInputDevice(EInputPromptDevice::Controller);
+	}
+	else
+	{
+		SetInputDevice(EInputPromptDevice::Keyboard);
+	}
+ }

@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Framework/Managers/InputManagers/InputDeviceManager.h"
 #include "InputPromptWidget.generated.h"
 
+class UInputDeviceManager;
 class UTextBlock;
 class UImage;
 
@@ -36,19 +38,18 @@ protected:
 protected:
 
 	UPROPERTY(meta = (BindWidget))TObjectPtr<UImage> BackKeyboardIcon;
-
 	UPROPERTY(meta = (BindWidget))TObjectPtr<UImage> BackControllerIcon;
-
 	UPROPERTY(meta = (BindWidget))TObjectPtr<UTextBlock> BackText;
-
 	UPROPERTY(meta = (BindWidget))TObjectPtr<UImage> AcceptKeyboardIcon;
-
 	UPROPERTY(meta = (BindWidget))TObjectPtr<UImage> AcceptControllerIcon;
-
 	UPROPERTY(meta = (BindWidget))TObjectPtr<UTextBlock> AcceptText;
 
 private:
 
+	UPROPERTY() UInputDeviceManager* InputDeviceManager = nullptr;
+	
+	void InputDeviceChanged(EInputDeviceType NewInputDevice);
+	
 	EInputPromptDevice CurrentDevice = EInputPromptDevice::Keyboard;
 
 	FText BackPromptText = FText::FromString(TEXT("Back"));

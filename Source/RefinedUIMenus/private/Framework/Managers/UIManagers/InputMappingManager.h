@@ -21,14 +21,9 @@ public:
 
 	UEnhancedInputUserSettings* GetUserSettings() const;
 
-	bool GetCurrentKey(
-		FName MappingName,
-		FKey& OutKey) const;
+	bool GetCurrentKey(FName MappingName,FKey& OutKey) const;
 
-	bool RemapKey(
-		FName MappingName,
-		const FKey& NewKey,
-		FText& OutFailureMessage);
+	bool RemapKey(FName MappingName,const FKey& NewKey,FText& OutFailureMessage);
 
 	void ResetMapping(FName MappingName);
 
