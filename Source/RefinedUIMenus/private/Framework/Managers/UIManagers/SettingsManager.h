@@ -40,6 +40,19 @@ public:
 	bool GetFullscreen() const {return bIsFullscreen;}; 
 	void SetFullscreen(bool Enabled);
 	
+	void SetResolution(int32 Width, int32 Height);
+	int32 GetResolutionWidth() const;
+	int32 GetResolutionHeight() const;
+	
+	EWindowMode::Type GetWindowMode() const;
+	void SetWindowMode(EWindowMode::Type NewWindowMode);
+	
+	bool GetVSyncEnabled() const;
+	void SetVSyncEnabled(bool Enabled);
+	
+	float GetFrameRateLimit() const;
+	void SetFrameRateLimit(float Value);
+	
 	// =========================================================
 	// Initialization
 	// =========================================================
@@ -114,6 +127,16 @@ private:
 	// =========================================================
 	
 	bool bIsFullscreen = true;
+	
+	int32 ResolutionWidth = 1920;
+	
+	int32 ResolutionHeight = 1080;
+	
+	EWindowMode::Type WindowMode = EWindowMode::WindowedFullscreen;
+	
+	bool bVSyncEnabled = false;
+	
+	float FrameRateLimit = 60.0f;
 	
 protected:
 	// =========================================================

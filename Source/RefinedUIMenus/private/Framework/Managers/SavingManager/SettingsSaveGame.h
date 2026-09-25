@@ -18,4 +18,10 @@ public:
 	UPROPERTY() float SFXVolume = 1.0f;
 	
 	UPROPERTY() bool bFullscreen = true;
+	
+	UPROPERTY() int32 ResolutionWidth = 1920;
+	UPROPERTY() int32 ResolutionHeight = 1080;
+	UPROPERTY() int32 WindowMode = 1;
+	UPROPERTY() bool bVSyncEnabled = false;
+	UPROPERTY() float FrameRateLimit = 60.0f;
 };

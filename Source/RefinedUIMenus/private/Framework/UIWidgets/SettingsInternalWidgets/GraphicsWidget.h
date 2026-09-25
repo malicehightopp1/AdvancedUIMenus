@@ -14,16 +14,55 @@ UCLASS()
 class UGraphicsWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
-	
-public:
+
+protected:
+
 	virtual void NativeConstruct() override;
-	
-	UFUNCTION() void SetSettingsManager(USettingsManager* NewSettingsManager);
-	
-	UFUNCTION() void OnWindowModeChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
-	UPROPERTY(meta = (BindWidget)) TObjectPtr<UComboBoxString> WindowModeComboBox;
-	
-	//references
-	UPROPERTY() TObjectPtr<USettingsManager> SettingsManager;
+
+public:
+
+	void SetSettingsManager(USettingsManager* NewSettingsManager);
+
+	UFUNCTION()void RefreshUI();
+protected:
+
+	// =========================
+	// Window Mode
+	// =========================
+
+	UPROPERTY(meta = (BindWidget))UComboBoxString* WindowModeComboBox;
+
+	UFUNCTION()void OnWindowModeChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
+
+	// =========================
+	// Resolution
+	// =========================
+
+	UPROPERTY(meta = (BindWidget))UComboBoxString* ResolutionComboBox;
+
+	UFUNCTION()void OnResolutionChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
+
+
+	// =========================
+	// VSync
+	// =========================
+
+	UPROPERTY(meta = (BindWidget))UCheckBox* VSyncCheckBox;
+
+	UFUNCTION()void OnVSyncChanged(bool bIsChecked);
+
+
+	// =========================
+	// Frame Rate
+	// =========================
+
+	UPROPERTY(meta = (BindWidget))UComboBoxString* FrameRateComboBox;
+
+	UFUNCTION()
+	void OnFrameRateChanged(FString SelectedItem, ESelectInfo::Type SelectionType);
+
+
+private:
+
+	UPROPERTY()USettingsManager* SettingsManager;
 };

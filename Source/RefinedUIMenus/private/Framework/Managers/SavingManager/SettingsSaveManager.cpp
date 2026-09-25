@@ -27,11 +27,19 @@ void USettingsSaveManager::SaveSettings()
 	{
 		return;
 	}
-	
+
+	//Audio
 	SettingsSaveGame->MasterVolume = SettingsManager->GetMasterVolume();
 	SettingsSaveGame->MusicVolume = SettingsManager->GetMusicVolume();
 	SettingsSaveGame->SFXVolume = SettingsManager->GetSfxVolume();
 	SettingsSaveGame->bFullscreen = SettingsManager->GetFullscreen();
+	
+	//Graphics
+	SettingsSaveGame->ResolutionWidth = SettingsManager->GetResolutionWidth();
+	SettingsSaveGame->ResolutionHeight = SettingsManager->GetResolutionHeight();
+	SettingsSaveGame->WindowMode = static_cast<int32>(SettingsManager->GetWindowMode());
+	SettingsSaveGame->bVSyncEnabled = SettingsManager->GetVSyncEnabled();
+	SettingsSaveGame->FrameRateLimit = SettingsManager->GetFrameRateLimit();
 	
 	UGameplayStatics::SaveGameToSlot(SettingsSaveGame, SaveSlotName, 0);
 	UE_LOG(LogTemp, Warning, TEXT("Saving manager called its Save settings function"))
@@ -55,9 +63,16 @@ void USettingsSaveManager::LoadSettings()
 		return;
 	}
 
+	//Audio
 	SettingsManager->SetMasterVolume(SettingsSaveGame->MasterVolume);
 	SettingsManager->SetMusicVolume(SettingsSaveGame->MusicVolume);
 	SettingsManager->SetSfxVolume(SettingsSaveGame->SFXVolume);
+	
+	//Graphics
+	SettingsManager->SetResolution(SettingsSaveGame->ResolutionWidth, SettingsSaveGame->ResolutionHeight);
+	SettingsManager->SetWindowMode(static_cast<EWindowMode::Type>(SettingsSaveGame->WindowMode));
+	SettingsManager->SetVSyncEnabled(SettingsSaveGame->bVSyncEnabled);
+	SettingsManager->SetFrameRateLimit(SettingsSaveGame->FrameRateLimit);
 	
 	UE_LOG(LogTemp, Warning, TEXT("Music Loaded: %f"), SettingsSaveGame->MusicVolume);
 	

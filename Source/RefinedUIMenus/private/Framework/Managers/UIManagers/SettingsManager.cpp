@@ -30,6 +30,88 @@ void USettingsManager::SetFullscreen(bool Enabled)
 	bIsFullscreen = Enabled;
 }
 
+void USettingsManager::SetResolution(int32 Width, int32 Height)
+{
+	ResolutionWidth = Width;
+	ResolutionHeight = Height;
+	
+	UGameUserSettings* GameUserSettings = GEngine->GetGameUserSettings();
+	
+	if (!GameUserSettings)
+	{
+		return;
+	}
+	GameUserSettings->SetScreenResolution(FIntPoint(Width,Height));
+	GameUserSettings->ApplySettings(false);
+}
+
+int32 USettingsManager::GetResolutionWidth() const
+{
+	return ResolutionWidth;
+}
+
+int32 USettingsManager::GetResolutionHeight() const
+{
+	return ResolutionHeight;
+}
+
+EWindowMode::Type USettingsManager::GetWindowMode() const
+{
+	return WindowMode;
+}
+
+void USettingsManager::SetWindowMode(EWindowMode::Type NewWindowMode)
+{
+	 WindowMode = NewWindowMode;
+	
+	UGameUserSettings* GameUserSettings = GEngine->GetGameUserSettings();
+	if (!GameUserSettings)
+	{
+		return;
+	}
+	GameUserSettings->SetFullscreenMode(NewWindowMode);
+	GameUserSettings->ApplySettings(false);
+}
+
+bool USettingsManager::GetVSyncEnabled() const
+{
+	return bVSyncEnabled;
+}
+
+void USettingsManager::SetVSyncEnabled(bool Enabled)
+{
+	bVSyncEnabled = Enabled;
+	
+	UGameUserSettings* GameUserSettings = GEngine->GetGameUserSettings();
+	
+	if (!GameUserSettings)
+	{
+		return;
+	}
+	GameUserSettings->SetVSyncEnabled(Enabled);
+	GameUserSettings->ApplySettings(false);
+}
+
+float USettingsManager::GetFrameRateLimit() const
+{
+	return FrameRateLimit;
+}
+
+void USettingsManager::SetFrameRateLimit(float Value)
+{
+	FrameRateLimit = Value;
+	
+	UGameUserSettings* GameUserSettings = GEngine->GetGameUserSettings();
+	
+	if (!GameUserSettings)
+	{
+		return;
+	}
+	
+	GameUserSettings->SetFrameRateLimit(Value);
+	GameUserSettings->ApplySettings(false);
+}
+
 void USettingsManager::Initialize(APlayerController* InPlayerController, TSubclassOf<USettingsWidget> InSettingsWidget,USoundClass* InMasterSoundClass, USoundClass* InMusicSoundClass, USoundClass* InSFXSoundClass,USoundMix* InSettingsSoundMix)
 {
 	PlayerController = InPlayerController;
