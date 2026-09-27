@@ -21,6 +21,7 @@ class UGraphicsWidget;
 class UAudioWidget;
 class UControlsWidget;
 class UGeneralWidget;
+class USettingsUnsavedPopup;
 
 UCLASS()
 class USettingsWidget : public UUserWidget
@@ -46,6 +47,10 @@ public:
 	UFUNCTION() void OnGraphicsClicked();
 	UFUNCTION() void OnAudioClicked();
 	UFUNCTION() void OnControlsClicked();
+	UFUNCTION() void OnResetToDefaultClicked();
+	UFUNCTION() void RefreshsettingsUI();
+	
+	void ShowUnsavedChangesPopup();
 	
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UWidgetSwitcher> PanelSwitcher;  //settings manager is using this
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UOverlay> ComponentHoldersOverlay;
@@ -57,12 +62,14 @@ public:
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> GraphicsButton;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> AudioButton;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> ControlsButton;
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> ResetToDefaultButton;
 	
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UGraphicsWidget> GraphicsWidget;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UControlsWidget> ControlsWidget;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioWidget> AudioWidget;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UGeneralWidget> GeneralWidget ;
 
+	UPROPERTY(meta = (BindWidget)) TObjectPtr<USettingsUnsavedPopup> UnsavedPopup;	
 private:
 	UPROPERTY() TObjectPtr<USettingsManager> SettingsManager; 
 	UPROPERTY() TObjectPtr<UKeyRemappingWidget> KeyRemappingWidget;

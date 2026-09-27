@@ -41,6 +41,12 @@ void AMainMenuPlayerController::BeginPlay()
 		return;
 	}
 
+	UMainMenuManager* MenuManager = Services->GetMainMenuManager();
+
+	if (!MenuManager)
+	{
+		return;
+	}
 	AMainMenuGameMode* GameMode = GetWorld()->GetAuthGameMode<AMainMenuGameMode>();
 
 	if (!GameMode)
@@ -48,12 +54,6 @@ void AMainMenuPlayerController::BeginPlay()
 		return;
 	}
 
-	UMainMenuManager* MenuManager = Services->GetMainMenuManager();
-
-	if (!MenuManager)
-	{
-		return;
-	}
 
 	USettingsManager* SettingsManager = Services->GetSettingsManager();
 	

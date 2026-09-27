@@ -77,16 +77,49 @@ void UAudioWidget::SetSettingsManager(USettingsManager* InSettingsManager)
 
 	UE_LOG(LogTemp, Warning, TEXT("AudioWidget: SettingsManager assigned"));
 	
+	RefreshUI();
+}
+
+void UAudioWidget::RefreshUI()
+{
+	if (!SettingsManager)
+	{
+		return;
+	}
+
 	if (MasterVolumeSlider)
 	{
 		MasterVolumeSlider->SetValue(SettingsManager->GetMasterVolume());
 	}
+
 	if (MusicVolumeSlider)
 	{
 		MusicVolumeSlider->SetValue(SettingsManager->GetMusicVolume());
 	}
+
 	if (SFXVolumeSlider)
 	{
 		SFXVolumeSlider->SetValue(SettingsManager->GetSfxVolume());
+	}
+
+	if (MasterVolumeTextBlock)
+	{
+		const int32 VolumePercent =FMath::RoundToInt(SettingsManager->GetMasterVolume() * 100.0f);
+
+		MasterVolumeTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Master Volume: %d%%"),VolumePercent)));
+	}
+
+	if (MusicVolumeTextBlock)
+	{
+		const int32 VolumePercent =FMath::RoundToInt(SettingsManager->GetMusicVolume() * 100.0f);
+
+		MusicVolumeTextBlock->SetText(FText::FromString(FString::Printf(TEXT("Music Volume: %d%%"),VolumePercent)));
+	}
+
+	if (SFXVolumeTextBlock)
+	{
+		const int32 VolumePercent =FMath::RoundToInt(SettingsManager->GetSfxVolume() * 100.0f);
+
+		SFXVolumeTextBlock->SetText(FText::FromString(FString::Printf(TEXT("SFX Volume: %d%%"),VolumePercent)));
 	}
 }

@@ -9,6 +9,7 @@
 #include "GameFramework/GameUserSettings.h"
 #include "Kismet/GameplayStatics.h"
 
+#pragma region Getters/Setters 
 //these set the variables to the loaded version
 void USettingsManager::SetMasterVolume(float Value)
 {
@@ -112,6 +113,18 @@ void USettingsManager::SetFrameRateLimit(float Value)
 	GameUserSettings->ApplySettings(false);
 }
 
+void USettingsManager::SetMainMenuManager(UMainMenuManager* InMainMenuManager)
+{
+	MainMenuManager = InMainMenuManager;
+}
+
+void USettingsManager::SetSettingsSaveManager(USettingsSaveManager* InSettingsSaveManager)
+{
+	SaveManager = InSettingsSaveManager;
+}
+#pragma endregion
+
+#pragma region Init Setup
 void USettingsManager::Initialize(APlayerController* InPlayerController, TSubclassOf<USettingsWidget> InSettingsWidget,USoundClass* InMasterSoundClass, USoundClass* InMusicSoundClass, USoundClass* InSFXSoundClass,USoundMix* InSettingsSoundMix)
 {
 	PlayerController = InPlayerController;
@@ -133,6 +146,20 @@ void USettingsManager::Initialize(APlayerController* InPlayerController, TSubcla
 
 		UE_LOG(LogTemp, Warning, TEXT("Settings Sound Mix Activated"));
 	}
+	
+	UGameUserSettings* GameUserSettings = GEngine->GetGameUserSettings();
+	
+	if (GameUserSettings)
+	{
+		ResolutionWidth = GameUserSettings->GetScreenResolution().X;
+		ResolutionHeight = GameUserSettings->GetScreenResolution().Y;
+		
+		WindowMode = GameUserSettings->GetFullscreenMode();
+		
+		bVSyncEnabled = GameUserSettings->IsVSyncEnabled();
+		
+		FrameRateLimit = GameUserSettings->GetFrameRateLimit();
+	}
 }
 
 void USettingsManager::SetSettingsWidget(USettingsWidget* InSettingsWidget)
@@ -145,16 +172,6 @@ void USettingsManager::SetSettingsWidget(USettingsWidget* InSettingsWidget)
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Settings Widget"));
 	ApplyState();
-}
-
-void USettingsManager::SetMainMenuManager(UMainMenuManager* InMainMenuManager)
-{
-	MainMenuManager = InMainMenuManager;
-}
-
-void USettingsManager::SetSettingsSaveManager(USettingsSaveManager* InSettingsSaveManager)
-{
-	SaveManager = InSettingsSaveManager;
 }
 
 bool USettingsManager::Validate() const
@@ -171,7 +188,9 @@ bool USettingsManager::Validate() const
 	}
 	return true;
 }
+#pragma endregion
 
+#pragma region Button Click handling
 void USettingsManager::OpenGeneral()
 {
 	SetState(ESettingsMenuStates::General);
@@ -204,15 +223,25 @@ void USettingsManager::GoBack()
 
 void USettingsManager::ApplySettings()
 {
-	UE_LOG(LogTemp, Log, TEXT("Apply settings has NOT reached the save settings"));
-	if (SaveManager)
+	UE_LOG(LogTemp,Log,TEXT("Settings Manager ApplySettings called"));
+
+	if (!SaveManager)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Apply settings has reached the save settings"));
+		UE_LOG(LogTemp,Warning,TEXT("Cannot save settings: SaveManager is null")
+		);
 
-		SaveManager->SaveSettings();
+		return;
 	}
-}
 
+	SaveManager->SaveSettings();
+	
+	CaptureSavedSettings();
+
+	UE_LOG(LogTemp,Log,TEXT("Settings successfully saved"));
+}
+#pragma endregion
+
+#pragma region Audio Management
 void USettingsManager::MasterVolumeChanged(float Volume)
 {
 	MasterVolume = Volume;
@@ -236,6 +265,8 @@ void USettingsManager::MasterVolumeChanged(float Volume)
 	}
 
 	UGameplayStatics::SetSoundMixClassOverride(PlayerController,SettingsSoundMix,MasterSoundClass,MasterVolume,1.0f,0.0f,true);
+	
+	MarkSettingsChanged();
 }
 
 void USettingsManager::SFXVolumeChanged(float Volume)
@@ -261,6 +292,8 @@ void USettingsManager::SFXVolumeChanged(float Volume)
 	}
 
 	UGameplayStatics::SetSoundMixClassOverride(PlayerController,SettingsSoundMix,SFXSoundClass,SFXVolume,1.0f,0.0f,false);
+	
+	MarkSettingsChanged();
 }
 
 void USettingsManager::MusicVolumeChanged(float Volume)
@@ -280,25 +313,230 @@ void USettingsManager::MusicVolumeChanged(float Volume)
 	} 
 	
 	UGameplayStatics::SetSoundMixClassOverride( PlayerController, SettingsSoundMix, MusicSoundClass, MusicVolume, 1.0f, 0.0f, false ); 
-}
-
-void USettingsManager::ChangeWindowMode(EWindowMode::Type NewWindowMode)
-{
-	UGameUserSettings* GameSettings = GEngine->GetGameUserSettings();
 	
-	if (!GameSettings)
+	MarkSettingsChanged();
+}
+#pragma endregion
+
+#pragma region Graphics Management
+
+void USettingsManager::ChangeWindowMode(const FString& NewWindowModeString)
+{
+	EWindowMode::Type NewWindowMode;
+
+	if (NewWindowModeString == TEXT("Windowed"))
 	{
+		NewWindowMode = EWindowMode::Windowed;
+	}
+	else if (NewWindowModeString == TEXT("Borderless"))
+	{
+		NewWindowMode = EWindowMode::WindowedFullscreen;
+	}
+	else if (NewWindowModeString == TEXT("Fullscreen"))
+	{
+		NewWindowMode = EWindowMode::Fullscreen;
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Invalid window mode selected: %s"),*NewWindowModeString);
+
 		return;
 	}
-	
-	GameSettings->SetFullscreenMode(NewWindowMode);
-	GameSettings->ApplyResolutionSettings(false);
+
+	SetWindowMode(NewWindowMode);
+
+	MarkSettingsChanged();
+
+	UE_LOG(LogTemp,Log,TEXT("Window mode changed to %s"),*NewWindowModeString);
 }
 
+void USettingsManager::ChangeResolution(const FString& NewResolution)
+{
+	int32 Width = 0;
+	int32 Height = 0;
+
+	if (NewResolution == TEXT("1280 x 720"))
+	{
+		Width = 1280;
+		Height = 720;
+	}
+	else if (NewResolution == TEXT("1600 x 900"))
+	{
+		Width = 1600;
+		Height = 900;
+	}
+	else if (NewResolution == TEXT("1920 x 1080"))
+	{
+		Width = 1920;
+		Height = 1080;
+	}
+	else if (NewResolution == TEXT("2560 x 1440"))
+	{
+		Width = 2560;
+		Height = 1440;
+	}
+	else if (NewResolution == TEXT("3840 x 2160"))
+	{
+		Width = 3840;
+		Height = 2160;
+	}
+
+	if (Width <= 0 || Height <= 0)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Invalid resolution selected: %s"),*NewResolution);
+
+		return;
+	}
+
+	SetResolution(Width, Height);
+
+	MarkSettingsChanged();
+
+	UE_LOG(LogTemp,Log,TEXT("Resolution changed to %d x %d"),Width,Height);
+}
+
+void USettingsManager::ChangeFrameRateLimit(const FString& NewFrameRateLimit)
+{
+	float NewFrameRate = 60.0f;
+
+	if (NewFrameRateLimit == TEXT("30 FPS"))
+	{
+		NewFrameRate = 30.0f;
+	}
+	else if (NewFrameRateLimit == TEXT("60 FPS"))
+	{
+		NewFrameRate = 60.0f;
+	}
+	else if (NewFrameRateLimit == TEXT("120 FPS"))
+	{
+		NewFrameRate = 120.0f;
+	}
+	else if (NewFrameRateLimit == TEXT("144 FPS"))
+	{
+		NewFrameRate = 144.0f;
+	}
+	else if (NewFrameRateLimit == TEXT("165 FPS"))
+	{
+		NewFrameRate = 165.0f;
+	}
+	else if (NewFrameRateLimit == TEXT("240 FPS"))
+	{
+		NewFrameRate = 240.0f;
+	}
+	else if (NewFrameRateLimit == TEXT("Unlimited"))
+	{
+		NewFrameRate = 0.0f;
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Invalid frame rate selected: %s"),*NewFrameRateLimit);
+
+		return;
+	}
+
+	SetFrameRateLimit(NewFrameRate);
+
+	MarkSettingsChanged();
+
+	UE_LOG(LogTemp,Log,TEXT("Frame rate changed to %s"),*NewFrameRateLimit);
+}
+
+void USettingsManager::ChangeVsync(bool bEnabled)
+{
+	SetVSyncEnabled(bEnabled);
+
+	MarkSettingsChanged();
+
+	UE_LOG(LogTemp,Log,TEXT("VSync changed to %s"),bEnabled ? TEXT("Enabled") : TEXT("Disabled"));
+}
+#pragma endregion
+
+#pragma region Resetting to default/ unsaved changes 
+void USettingsManager::MarkSettingsChanged()
+{
+	bHasUnsavedChanges = true;
+	UE_LOG(LogTemp, Warning, TEXT("settings have been marked as saved"));
+}
+
+bool USettingsManager::HasUnsavedChanges() const
+{
+	return bHasUnsavedChanges;
+}
+
+void USettingsManager::ClearUnsavedChanges()
+{
+	bHasUnsavedChanges = false;
+	UE_LOG(LogTemp, Warning, TEXT("cleared out changes"));
+}
+
+void USettingsManager::RestoreSavedSettings()
+{
+	UE_LOG(LogTemp,Warning,TEXT("Restoring previously saved settings"));
+
+	SetMasterVolume(SavedMasterVolume);
+	SetMusicVolume(SavedMusicVolume);
+	SetSfxVolume(SavedSFXVolume);
+
+	SetResolution(SavedResolutionWidth,SavedResolutionHeight);
+
+	SetWindowMode(SavedWindowMode);
+
+	SetVSyncEnabled(SavedVsyncEnabled);
+
+	SetFrameRateLimit(SavedFrameRateLimit);
+
+	ClearUnsavedChanges();
+
+	UE_LOG(LogTemp,Warning,TEXT("Previously saved settings restored"));
+}
+
+void USettingsManager::ResetToDefaults()
+{
+	UE_LOG(LogTemp,Warning,TEXT("Resetting settings to defaults"));
+
+	SetMasterVolume(1.0f);
+	SetMusicVolume(1.0f);
+	SetSfxVolume(1.0f);
+
+	SetResolution(1920, 1080);
+
+	SetWindowMode(EWindowMode::Windowed);
+
+	SetVSyncEnabled(false);
+
+	SetFrameRateLimit(60.0f);
+
+	MarkSettingsChanged();
+
+	UE_LOG(LogTemp,Warning,TEXT("Settings reset to defaults - changes NOT saved"));
+}
+
+void USettingsManager::CaptureSavedSettings()
+{
+	SavedMasterVolume = MasterVolume;
+	SavedMusicVolume = MusicVolume;
+	SavedSFXVolume = SFXVolume;
+	
+	SavedResolutionWidth = ResolutionWidth;
+	SavedResolutionHeight = ResolutionHeight;
+	
+	SavedWindowMode = WindowMode;
+	
+	SavedVsyncEnabled = bVSyncEnabled;
+	
+	SavedFrameRateLimit = FrameRateLimit;
+	
+	bHasUnsavedChanges = false;
+	UE_LOG(LogTemp, Warning, TEXT("Settings have been captured"));
+}
+#pragma endregion
+
+#pragma region State Management
 ESettingsMenuStates USettingsManager::GetCurrentState() const
 {
 	return CurrentState;
 }
+
 
 void USettingsManager::SetState(ESettingsMenuStates NewState)
 {
@@ -338,4 +576,5 @@ void USettingsManager::ApplyState()
 			break;
 	}
 }
+#pragma endregion
 

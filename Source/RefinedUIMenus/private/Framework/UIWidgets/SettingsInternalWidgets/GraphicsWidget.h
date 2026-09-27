@@ -65,4 +65,6 @@ protected:
 private:
 
 	UPROPERTY()USettingsManager* SettingsManager;
+	
+	bool bIsRefreshingUI = false;
 };

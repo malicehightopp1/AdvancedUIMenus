@@ -16,7 +16,7 @@ class UAudioWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 	UFUNCTION() void SetSettingsManager(USettingsManager* InSettingsManager);
-	
+	UFUNCTION() void RefreshUI();
 protected:
 	virtual void NativeOnInitialized() override;
 	

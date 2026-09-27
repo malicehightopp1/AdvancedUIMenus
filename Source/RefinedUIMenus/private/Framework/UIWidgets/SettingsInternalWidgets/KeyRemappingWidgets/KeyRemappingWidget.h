@@ -28,6 +28,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, category = "Input remapping") TArray<FRemappableInput> RemappableInputs; 
 	void SetRemappingManager(UInputMappingManager* InRemappingManager);
+	void BuildRemappingList();
 protected:
     
         virtual void NativeConstruct() override;
@@ -42,5 +43,4 @@ private:
 		
 		UPROPERTY(EditAnywhere, Category = "Remapping") TObjectPtr<UInputIconData> InputIconData;
 	
-        void BuildRemappingList();
 };

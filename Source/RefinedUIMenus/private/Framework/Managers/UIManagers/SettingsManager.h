@@ -28,30 +28,30 @@ class USettingsManager : public UObject
 	GENERATED_BODY()
 
 public:
+	// =========================================================
+	// Getters
+	// =========================================================
 	float GetMasterVolume() const {return MasterVolume;};
-	void SetMasterVolume(float Value);
-	
 	float GetMusicVolume() const {return MusicVolume;};
-	void SetMusicVolume(float Value);
-	
 	float GetSfxVolume() const {return SFXVolume;};
-	void SetSfxVolume(float Value);
-	
 	bool GetFullscreen() const {return bIsFullscreen;}; 
-	void SetFullscreen(bool Enabled);
-	
-	void SetResolution(int32 Width, int32 Height);
 	int32 GetResolutionWidth() const;
 	int32 GetResolutionHeight() const;
-	
 	EWindowMode::Type GetWindowMode() const;
-	void SetWindowMode(EWindowMode::Type NewWindowMode);
-	
 	bool GetVSyncEnabled() const;
-	void SetVSyncEnabled(bool Enabled);
-	
 	float GetFrameRateLimit() const;
+	
+	// =========================================================
+	// Setters
+	// =========================================================
+	void SetMasterVolume(float Value);
+	void SetMusicVolume(float Value);
+	void SetSfxVolume(float Value);
+	void SetFullscreen(bool Enabled);
+	void SetResolution(int32 Width, int32 Height);
 	void SetFrameRateLimit(float Value);
+	void SetWindowMode(EWindowMode::Type NewWindowMode);
+	void SetVSyncEnabled(bool Enabled);
 	
 	// =========================================================
 	// Initialization
@@ -83,12 +83,38 @@ public:
 	void SFXVolumeChanged(float Volume);
 	void MusicVolumeChanged(float Volume);
 	
-	void ChangeWindowMode(EWindowMode::Type NewWindowMode);
+	
+	void ChangeWindowMode(const FString& NewWindowModeString);
+	void ChangeResolution(const FString& NewResolution);
+	void ChangeFrameRateLimit(const FString& NewFrameRateLimit);
+	void ChangeVsync(bool bEnabled);
+	
 	
 	// =========================================================
 	// States
 	// =========================================================
 	ESettingsMenuStates GetCurrentState() const;
+	
+	// =========================================================
+	// Unsaved Changes
+	// =========================================================
+	
+	void MarkSettingsChanged();
+	bool HasUnsavedChanges() const;
+	void ClearUnsavedChanges();
+	void RestoreSavedSettings();
+	
+	// =========================================================
+	// Reset
+	// =========================================================
+	
+	void ResetToDefaults();
+	
+	// =========================================================
+	// Saved settings
+	// =========================================================
+	
+	void CaptureSavedSettings();
 	
 private:
 	// =========================================================
@@ -105,8 +131,9 @@ private:
 	UPROPERTY() TObjectPtr<USettingsSaveManager> SaveManager;
 	
 	// =========================================================
-	// States
+	// State management
 	// =========================================================
+
 	
 	void SetState(ESettingsMenuStates NewState);
 	void ApplyState();
@@ -115,7 +142,30 @@ private:
 	TArray<ESettingsMenuStates> StateStack;
 	
 	// =========================================================
-	// Audio Values
+	// Unsaved Changes
+	// =========================================================
+	
+	bool bHasUnsavedChanges = false;
+	
+	// =========================================================
+	// Unsaved Changes
+	// =========================================================
+	
+	float SavedMasterVolume = 1.0f;
+	float SavedMusicVolume = 1.0f;
+	float SavedSFXVolume = 1.0f;
+	
+	int32 SavedResolutionWidth = 1920;
+	int32 SavedResolutionHeight = 1080;
+	
+	EWindowMode::Type SavedWindowMode = EWindowMode::Windowed;
+	
+	bool SavedVsyncEnabled = false;
+	
+	float SavedFrameRateLimit = 60.0f;
+	
+	// =========================================================
+	// Audio Values - Base values
 	// =========================================================
 	
 	float MasterVolume = 1.0f;
@@ -123,7 +173,7 @@ private:
 	float MusicVolume = 1.0f;
 	
 	// =========================================================
-	// Graphics Values
+	// Graphics Values - Base values
 	// =========================================================
 	
 	bool bIsFullscreen = true;

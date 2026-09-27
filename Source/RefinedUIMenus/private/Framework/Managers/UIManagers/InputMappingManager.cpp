@@ -1,6 +1,5 @@
 #include "InputMappingManager.h"
 
-#include "Framework/UIWidgets/SettingsInternalWidgets/KeyRemappingWidgets/KeyRemappingRowWidget.h"
 #include "EnhancedInputSubsystems.h"
 #include "UserSettings/EnhancedInputUserSettings.h"
 #include "GameFramework/PlayerController.h"
@@ -8,168 +7,142 @@
 #include "InputMappingContext.h"
 #include "InputCoreTypes.h"
 
-void UInputMappingManager::Initialize(
-    APlayerController* InPlayerController,
-    UInputMappingContext* InPlayerMappingContext)
+void UInputMappingManager::Initialize(APlayerController* InPlayerController,UInputMappingContext* InPlayerMappingContext)
 {
-    PlayerController = InPlayerController;
-    PlayerMappingContext = InPlayerMappingContext;
+	PlayerController = InPlayerController;
+	PlayerMappingContext = InPlayerMappingContext;
 
-    if (!PlayerController)
-    {
-        UE_LOG(
-            LogTemp,
-            Error,
-            TEXT("InputRemappingManager: PlayerController is null."));
+	if (!PlayerController)
+	{
+		return;
+	}
 
-        return;
-    }
+	ULocalPlayer* LocalPlayer =PlayerController->GetLocalPlayer();
 
-    ULocalPlayer* LocalPlayer =
-        PlayerController->GetLocalPlayer();
+	if (!LocalPlayer)
+	{
+		return;
+	}
 
-    if (!LocalPlayer)
-    {
-        UE_LOG(
-            LogTemp,
-            Error,
-            TEXT("InputRemappingManager: LocalPlayer is null."));
+	UEnhancedInputLocalPlayerSubsystem* InputSubsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 
-        return;
-    }
+	if (!InputSubsystem)
+	{
+		return;
+	}
 
-    UEnhancedInputLocalPlayerSubsystem* InputSubsystem =
-        LocalPlayer->GetSubsystem<
-            UEnhancedInputLocalPlayerSubsystem>();
+	UserSettings = InputSubsystem->GetUserSettings();
 
-    if (!InputSubsystem)
-    {
-        UE_LOG(
-            LogTemp,
-            Error,
-            TEXT("InputRemappingManager: Input subsystem is null."));
+	if (!UserSettings)
+	{
+		return;
+	}
 
-        return;
-    }
+	if (PlayerMappingContext)
+	{
+		UserSettings->RegisterInputMappingContext(PlayerMappingContext);
+	}
+}
 
-    UserSettings = InputSubsystem->GetUserSettings();
+UEnhancedInputUserSettings* UInputMappingManager::GetUserSettings() const
+{
+	return UserSettings;
+}
+
+bool UInputMappingManager::GetCurrentKey(FName MappingName, FKey& OutKey) const
+{
+	OutKey = EKeys::Invalid;
+
+	if (!UserSettings)
+	{
+		return false;
+	}
+
+	if (MappingName.IsNone())
+	{
+		return false;
+	}
+
+	const FPlayerKeyMapping* Mapping =UserSettings->FindCurrentMappingForSlot(MappingName,EPlayerMappableKeySlot::First);
+
+	if (!Mapping)
+	{
+		return false;
+	}
+
+	OutKey = Mapping->GetCurrentKey();
+
+	return OutKey.IsValid();
+}
+
+bool UInputMappingManager::GetDefaultKey(FName MappingName, FKey& OutKey) const
+{
+	OutKey = EKeys::Invalid;
+
+	if (!UserSettings)
+	{
+		return false;
+	}
+
+	if (MappingName.IsNone())
+	{
+		return false;
+	}
+
+	const FPlayerKeyMapping* Mapping =UserSettings->FindCurrentMappingForSlot(MappingName,EPlayerMappableKeySlot::First);
+
+	if (!Mapping)
+	{
+		return false;
+	}
+
+	OutKey = Mapping->GetDefaultKey();
+
+	return OutKey.IsValid();
+}
+
+bool UInputMappingManager::RemapKey(FName MappingName, const FKey& NewKey, FText& OutFailureMessage)
+{
+	    OutFailureMessage = FText::GetEmpty();
 
     if (!UserSettings)
     {
-        UE_LOG(
-            LogTemp,
-            Error,
-            TEXT("InputRemappingManager: User Settings are null."));
-
-        return;
-    }
-
-    if (PlayerMappingContext)
-    {
-        UserSettings->RegisterInputMappingContext(
-            PlayerMappingContext);
-    }
-
-    UE_LOG(
-        LogTemp,
-        Log,
-        TEXT("Input Remapping Manager Initialized"));
-}
-
-UEnhancedInputUserSettings*
-UInputMappingManager::GetUserSettings() const
-{
-    return UserSettings;
-}
-
-bool UInputMappingManager::GetCurrentKey(
-    FName MappingName,
-    FKey& OutKey) const
-{
-    if (!UserSettings || MappingName.IsNone())
-    {
-        return false;
-    }
-
-    const FPlayerKeyMapping* Mapping =
-        UserSettings->FindCurrentMappingForSlot(
-            MappingName,
-            EPlayerMappableKeySlot::First);
-
-    if (!Mapping)
-    {
-        return false;
-    }
-
-    OutKey = Mapping->GetCurrentKey();
-
-    return OutKey.IsValid();
-}
-
-bool UInputMappingManager::RemapKey(
-    FName MappingName,
-    const FKey& NewKey,
-    FText& OutFailureMessage)
-{
-    OutFailureMessage = FText::GetEmpty();
-
-    if (!UserSettings)
-    {
-        OutFailureMessage =
-            FText::FromString(
-                TEXT("Input settings are unavailable."));
+        OutFailureMessage = FText::FromString(TEXT("Input settings are unavailable."));
 
         return false;
     }
 
     if (MappingName.IsNone())
     {
-        OutFailureMessage =
-            FText::FromString(
-                TEXT("Invalid input mapping."));
+        OutFailureMessage = FText::FromString(TEXT("Invalid input mapping."));
 
         return false;
     }
 
     if (!NewKey.IsValid())
     {
-        OutFailureMessage =
-            FText::FromString(
-                TEXT("Invalid key."));
+        OutFailureMessage = FText::FromString(TEXT("Invalid key."));
 
         return false;
     }
 
-    UEnhancedPlayerMappableKeyProfile* Profile =
-        UserSettings->GetCurrentKeyProfile();
+    UEnhancedPlayerMappableKeyProfile* Profile = UserSettings->GetCurrentKeyProfile();
 
     if (!Profile)
     {
-        OutFailureMessage =
-            FText::FromString(
-                TEXT("Input profile is unavailable."));
+        OutFailureMessage =FText::FromString(TEXT("Input profile is unavailable."));
 
         return false;
     }
+	
 
-    // Check whether another action already uses this key.
-    TArray<FName> MappingNamesUsingKey;
+    FName ConflictingMapping;
 
-    Profile->GetMappingNamesForKey(
-        NewKey,
-        MappingNamesUsingKey);
-
-    for (const FName ExistingMappingName :
-         MappingNamesUsingKey)
+    if (FindKeyConflict(MappingName,NewKey,ConflictingMapping))
     {
-        if (ExistingMappingName != MappingName)
-        {
-            OutFailureMessage =
-                FText::FromString(
-                    TEXT("That key is already in use."));
+        OutFailureMessage = FText::Format(NSLOCTEXT("InputMapping","KeyConflict","That key is already assigned to {0}."),FText::FromName(ConflictingMapping));
 
-            return false;
-        }
+        return false;
     }
 
     FMapPlayerKeyArgs Args;
@@ -187,75 +160,187 @@ bool UInputMappingManager::RemapKey(
 
     if (!FailureReason.IsEmpty())
     {
-        OutFailureMessage =
-            FText::FromString(
-                TEXT("Unable to assign that key."));
+        OutFailureMessage = FText::FromString(TEXT("Unable to assign that key."));
 
         return false;
     }
 
-    UserSettings->ApplySettings();
-
-    SaveMappings();
-
-    UE_LOG(
-        LogTemp,
-        Log,
-        TEXT("Input mapping changed: %s -> %s"),
-        *MappingName.ToString(),
-        *NewKey.ToString());
+	//marking the change
+    bHasUnsavedChanges = true;
 
     return true;
 }
 
-void UInputMappingManager::ResetMapping(
-    FName MappingName)
+bool UInputMappingManager::ResetMapping(FName MappingName)
 {
-    if (!UserSettings || MappingName.IsNone())
-    {
-        return;
-    }
+	if (!UserSettings)
+	{
+		return false;
+	}
 
-    FMapPlayerKeyArgs Args;
+	if (MappingName.IsNone())
+	{
+		return false;
+	}
 
-    Args.MappingName = MappingName;
-    Args.Slot = EPlayerMappableKeySlot::First;
+	FMapPlayerKeyArgs Args;
 
-    FGameplayTagContainer FailureReason;
+	Args.MappingName = MappingName;
+	Args.Slot = EPlayerMappableKeySlot::First;
 
-    UserSettings->ResetAllPlayerKeysInRow(
-        Args,
-        FailureReason);
+	FGameplayTagContainer FailureReason;
 
-    UserSettings->ApplySettings();
+	UserSettings->ResetAllPlayerKeysInRow(Args,FailureReason);
 
-    SaveMappings();
+	if (!FailureReason.IsEmpty())
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Failed to reset mapping: %s"),*MappingName.ToString());
+
+		return false;
+	}
+
+	bHasUnsavedChanges = true;
+
+	return true;
 }
 
-void UInputMappingManager::ResetAllMappings()
+bool UInputMappingManager::ResetAllMappings()
 {
-    if (!UserSettings)
-    {
-        return;
-    }
+	if (!UserSettings)
+	{
+		return false;
+	}
 
-    FGameplayTagContainer FailureReason;
+	FGameplayTagContainer FailureReason;
 
-    UserSettings->ResetKeyProfileIdToDefault(
-        UserSettings->GetActiveKeyProfileId(),
-        FailureReason);
+	UserSettings->ResetKeyProfileIdToDefault(UserSettings->GetActiveKeyProfileId(),FailureReason);
 
-    UserSettings->ApplySettings();
+	if (!FailureReason.IsEmpty())
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Failed to reset all input mappings."));
 
-    SaveMappings();
+		return false;
+	}
+
+	bHasUnsavedChanges = true;
+
+	return true;
 }
 
-void UInputMappingManager::SaveMappings()
+bool UInputMappingManager::FindKeyConflict(FName MappingName, const FKey& Key, FName& OutConflictingMapping) const
 {
-    if (!UserSettings)
-    {
-        return;
-    }
+	OutConflictingMapping = NAME_None;
 
-    UserSettings->SaveSettings();
+	if (!UserSettings)
+	{
+		return false;
+	}
+
+	if (MappingName.IsNone())
+	{
+		return false;
+	}
+
+	if (!Key.IsValid())
+	{
+		return false;
+	}
+
+	UEnhancedPlayerMappableKeyProfile* Profile = UserSettings->GetCurrentKeyProfile();
+
+	if (!Profile)
+	{
+		return false;
+	}
+
+	TArray<FName> MappingNamesUsingKey;
+
+	Profile->GetMappingNamesForKey(Key,MappingNamesUsingKey);
+
+	for (const FName ExistingMappingName : MappingNamesUsingKey)
+	{
+		if (ExistingMappingName != MappingName)
+		{
+			OutConflictingMapping =ExistingMappingName;
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool UInputMappingManager::ApplyMappings()
+{
+	if (!UserSettings)
+	{
+		return false;
+	}
+
+	UserSettings->ApplySettings();
+
+	if (!SaveMappings())
+	{
+		return false;
+	}
+
+	bHasUnsavedChanges = false;
+
+	return true;
+}
+
+bool UInputMappingManager::RevertMappings()
+{
+	if (!UserSettings)
+	{
+		return false;
+	}
+
+	if (!bHasUnsavedChanges)
+	{
+		return true;
+	}
+
+	if (!LoadMappings())
+	{
+		return false;
+	}
+
+	bHasUnsavedChanges = false;
+
+	return true;
+}
+
+bool UInputMappingManager::SaveMappings()
+{
+	if (!UserSettings)
+	{
+		return false;
+	}
+
+	UserSettings->SaveSettings();
+
+	return true;
+}
+
+bool UInputMappingManager::LoadMappings()
+{
+	if (!UserSettings)
+	{
+		return false;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Input mappings loaded from User Settings."));
+
+	return true;
+}
+
+bool UInputMappingManager::HasUnsavedChanges() const
+{
+	return bHasUnsavedChanges;
+}
+
+void UInputMappingManager::ClearUnsavedChanges()
+{
+	bHasUnsavedChanges = false;
 }

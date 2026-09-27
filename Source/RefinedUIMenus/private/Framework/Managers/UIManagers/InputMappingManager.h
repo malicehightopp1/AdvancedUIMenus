@@ -15,30 +15,91 @@ UCLASS()
 class UInputMappingManager : public UObject
 {
 	GENERATED_BODY()
+
 public:
 
-	void Initialize(APlayerController* InPlayerController,UInputMappingContext* InPlayerMappingContext);
+    // =========================================================
+    // Initialization
+    // =========================================================
 
-	UEnhancedInputUserSettings* GetUserSettings() const;
+    void Initialize(APlayerController* InPlayerController,UInputMappingContext* InPlayerMappingContext);
 
-	bool GetCurrentKey(FName MappingName,FKey& OutKey) const;
+    // =========================================================
+    // User Settings
+    // =========================================================
 
-	bool RemapKey(FName MappingName,const FKey& NewKey,FText& OutFailureMessage);
+    UEnhancedInputUserSettings* GetUserSettings() const;
 
-	void ResetMapping(FName MappingName);
+    // =========================================================
+    // Current Keys
+    // =========================================================
 
-	void ResetAllMappings();
+    bool GetCurrentKey(FName MappingName,FKey& OutKey) const;
 
-	void SaveMappings();
+    bool GetDefaultKey(FName MappingName,FKey& OutKey) const;
+
+    // =========================================================
+    // Remapping
+    // =========================================================
+
+    bool RemapKey(FName MappingName,const FKey& NewKey,FText& OutFailureMessage);
+
+    // =========================================================
+    // Reset
+    // =========================================================
+
+    bool ResetMapping(FName MappingName);
+
+    bool ResetAllMappings();
+
+    // =========================================================
+    // Conflict Detection
+    // =========================================================
+
+    bool FindKeyConflict(FName MappingName,const FKey& Key,FName& OutConflictingMapping) const;
+
+    // =========================================================
+    // Apply / Revert
+    // =========================================================
+
+    bool ApplyMappings();
+
+    bool RevertMappings();
+
+    // =========================================================
+    // Save / Load
+    // =========================================================
+
+    bool SaveMappings();
+
+    bool LoadMappings();
+
+    // =========================================================
+    // Unsaved Changes
+    // =========================================================
+
+    bool HasUnsavedChanges() const;
+
+    void ClearUnsavedChanges();
 
 private:
 
-	UPROPERTY()
-	TObjectPtr<APlayerController> PlayerController;
+    // =========================================================
+    // References
+    // =========================================================
 
-	UPROPERTY()
-	TObjectPtr<UInputMappingContext> PlayerMappingContext;
+    UPROPERTY()
+    TObjectPtr<APlayerController> PlayerController;
 
-	UPROPERTY()
-	TObjectPtr<UEnhancedInputUserSettings> UserSettings;
+    UPROPERTY()
+    TObjectPtr<UInputMappingContext> PlayerMappingContext;
+
+    UPROPERTY()
+    TObjectPtr<UEnhancedInputUserSettings> UserSettings;
+
+    // =========================================================
+    // State
+    // =========================================================
+
+    bool bHasUnsavedChanges = false;
 };

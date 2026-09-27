@@ -8,6 +8,7 @@
 #include "SettingsInternalWidgets/AudioWidget.h"
 #include "SettingsInternalWidgets/GraphicsWidget.h"
 #include "WidgetComponents/AudioButtonBase.h"
+#include "WidgetComponents/SettingsUnsavedPopup.h"
 
 
 void USettingsWidget::NativeConstruct()
@@ -61,6 +62,11 @@ void USettingsWidget::NativeOnInitialized()
 		ApplyButton->OnClicked.AddDynamic(this, &USettingsWidget::OnApplyButtonClicked);
 		ApplyButton->IsFocusable = true;
 	}
+	if (ResetToDefaultButton)
+	{
+		ResetToDefaultButton->OnClicked.AddDynamic(this, &USettingsWidget::OnResetToDefaultClicked);
+		ResetToDefaultButton->IsFocusable = true;
+	}
 }
 
 void USettingsWidget::SetSettingsManager(USettingsManager* NewSettingManager)
@@ -70,7 +76,15 @@ void USettingsWidget::SetSettingsManager(USettingsManager* NewSettingManager)
 	if (AudioWidget)
 	{
 		AudioWidget->SetSettingsManager(SettingsManager);
+	}
+	if (GraphicsWidget)
+	{
 		GraphicsWidget->SetSettingsManager(SettingsManager);
+	}
+	if (UnsavedPopup)
+	{
+		UnsavedPopup->SetSettingsManager(SettingsManager);
+		UnsavedPopup->SetSettingsWidget(this);
 	}
 }
 
@@ -86,10 +100,19 @@ UControlsWidget* USettingsWidget::GetControlsWidget() const
 
 void USettingsWidget::OnBackButtonPressed()
 {
-	if (SettingsManager)
+	if (!SettingsManager)
 	{
-		SettingsManager->GoBack();
+		return;
 	}
+
+	if (SettingsManager->HasUnsavedChanges())
+	{
+		UE_LOG(LogTemp, Log, TEXT("Unsaved changes has been focused"));
+		ShowUnsavedChangesPopup();
+		return;
+	}
+	
+	SettingsManager->GoBack();
 }
 
 void USettingsWidget::OnApplyButtonClicked()
@@ -140,4 +163,39 @@ void USettingsWidget::OnControlsClicked()
 	{
 		SettingsManager->OpenControls();
 	}
+}
+
+void USettingsWidget::OnResetToDefaultClicked()
+{
+	if (!SettingsManager)
+	{
+		return;
+	}
+
+	SettingsManager->ResetToDefaults();
+	
+	RefreshsettingsUI();
+}
+
+void USettingsWidget::RefreshsettingsUI()
+{
+	if (!SettingsManager)
+	{
+		return;
+	}
+
+	if (AudioWidget)
+	{
+		AudioWidget->RefreshUI();
+	}
+
+	if (GraphicsWidget)
+	{
+		GraphicsWidget->RefreshUI();
+	}
+}
+
+void USettingsWidget::ShowUnsavedChangesPopup()
+{
+	UnsavedPopup->SetVisibility(ESlateVisibility::Visible);
 }
