@@ -83,18 +83,18 @@ void UControlsWidget::OnResetAllClicked()
 
 void UControlsWidget::RefreshUnsavedState()
 {
-	if (!InputMappingManager || !TextBlock)
+	if (!InputMappingManager || !UnSavedChanges)
 	{
 		return;
 	}
 
 	if (InputMappingManager->HasUnsavedChanges())
 	{
-		TextBlock->SetVisibility(ESlateVisibility::Visible);
+		UnSavedChanges->SetVisibility(ESlateVisibility::Visible);
 	}
 	else
 	{
-		TextBlock->SetVisibility(ESlateVisibility::Collapsed);
+		UnSavedChanges->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 

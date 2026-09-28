@@ -8,6 +8,8 @@
 #include "SettingsInternalWidgets/AudioWidget.h"
 #include "SettingsInternalWidgets/GraphicsWidget.h"
 #include "WidgetComponents/AudioButtonBase.h"
+#include "Framework/Managers/InputManagers/InputDeviceManager.h"
+#include "Framework/Services/ServiceLocatorSubsystem.h"
 #include "WidgetComponents/SettingsUnsavedPopup.h"
 
 
@@ -66,6 +68,18 @@ void USettingsWidget::NativeOnInitialized()
 	{
 		ResetToDefaultButton->OnClicked.AddDynamic(this, &USettingsWidget::OnResetToDefaultClicked);
 		ResetToDefaultButton->IsFocusable = true;
+	}
+	
+	UServiceLocatorSubSystem* Services = UServiceLocatorSubSystem::Get(this);
+
+	if (Services)
+	{
+		UInputDeviceManager* InputDeviceManager = Services->GetInputDeviceManager();
+
+		if (InputDeviceManager)
+		{
+			InputDeviceManager->OnInputDeviceChanged.AddDynamic(this, &USettingsWidget::OnInputDeviceChanged);
+		}
 	}
 }
 
@@ -126,10 +140,30 @@ void USettingsWidget::OnApplyButtonClicked()
 
 void USettingsWidget::SetGeneralButtonFocus()
 {
-	if (GeneralButton)
+	if (!GeneralButton)
+	{
+		return;
+	}
+
+	UServiceLocatorSubSystem* Services = UServiceLocatorSubSystem::Get(this);
+
+	if (!Services)
+	{
+		return;
+	}
+
+	UInputDeviceManager* InputDeviceManager = Services->GetInputDeviceManager();
+
+	if (!InputDeviceManager)
+	{
+		return;
+	}
+
+	if (InputDeviceManager->IsUsingController())
 	{
 		GeneralButton->SetKeyboardFocus();
-		UE_LOG(LogTemp, Log, TEXT("General button has been focused"));
+
+		UE_LOG(LogTemp, Log, TEXT("General button focused because controller is being used"));
 	}
 }
 
@@ -198,4 +232,12 @@ void USettingsWidget::RefreshsettingsUI()
 void USettingsWidget::ShowUnsavedChangesPopup()
 {
 	UnsavedPopup->SetVisibility(ESlateVisibility::Visible);
+}
+
+void USettingsWidget::OnInputDeviceChanged(EInputDeviceType NewDeviceType)
+{
+	if (NewDeviceType == EInputDeviceType::Controller)
+	{
+		SetGeneralButtonFocus();
+	}
 }

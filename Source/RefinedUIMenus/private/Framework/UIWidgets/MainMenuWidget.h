@@ -40,6 +40,7 @@ public:
 	
 	UFUNCTION() void FocusStartButton();
 	
+	UFUNCTION() void OnInputDeviceChanged(EInputDeviceType NewDeviceType);
 	//=================================================//
 	//				Components
 	//=================================================//

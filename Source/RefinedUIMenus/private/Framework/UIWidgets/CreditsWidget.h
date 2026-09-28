@@ -24,6 +24,8 @@ public:
 	
 	UFUNCTION() void FocusBackButton();
 	
+	UFUNCTION() void OnInputDeviceChanged(EInputDeviceType NewDeviceType);
+
 	UFUNCTION() void SetMainMenuManager(UMainMenuManager* InMainMenuManager);
 
 	UFUNCTION() void OnBackButtonPressed();

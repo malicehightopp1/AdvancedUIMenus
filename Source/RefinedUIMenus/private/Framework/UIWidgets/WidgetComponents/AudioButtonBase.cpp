@@ -5,25 +5,6 @@
 
 #include "Kismet/GameplayStatics.h"
 
-void UAudioButtonBase::PostLoad()
-{
-	Super::PostLoad();
-	
-	OnClicked.AddUniqueDynamic(this, &UAudioButtonBase::PlayClickSound);
-}
-
-void UAudioButtonBase::PostInitProperties()
-{
-	Super::PostInitProperties();
-	
-	OnClicked.AddUniqueDynamic(this, &UAudioButtonBase::PlayClickSound);
-	OnHovered.AddDynamic(this, &UAudioButtonBase::OnButtonHovered);
-	OnUnhovered.AddDynamic(this, &UAudioButtonBase::OnButtonUnhovered);
-	
-	OnReceivedFocus.BindUObject(this, &UAudioButtonBase::OnButtonReceivedFocus);
-	OnLostFocus.BindUObject(this, &UAudioButtonBase::OnButtonLostFocus);
-}
-
 void UAudioButtonBase::OnButtonHovered()
 {
 	SetRenderScale(FVector2D(1.15f, 1.15f));
@@ -48,6 +29,13 @@ void UAudioButtonBase::OnButtonLostFocus()
 
 UAudioButtonBase::UAudioButtonBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+		
+	OnClicked.AddUniqueDynamic(this, &UAudioButtonBase::PlayClickSound);
+	OnHovered.AddUniqueDynamic(this, &UAudioButtonBase::OnButtonHovered);
+	OnUnhovered.AddUniqueDynamic(this, &UAudioButtonBase::OnButtonUnhovered);
+	
+	OnReceivedFocus.BindUObject(this, &UAudioButtonBase::OnButtonReceivedFocus);
+	OnLostFocus.BindUObject(this, &UAudioButtonBase::OnButtonLostFocus);
 }
 
 void UAudioButtonBase::SetControllerFocus(bool bIsFocused)

@@ -52,6 +52,8 @@ public:
 	
 	void ShowUnsavedChangesPopup();
 	
+	UFUNCTION() void OnInputDeviceChanged(EInputDeviceType NewDeviceType);
+	
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UWidgetSwitcher> PanelSwitcher;  //settings manager is using this
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UOverlay> ComponentHoldersOverlay;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UBorder> SettingsBackground;

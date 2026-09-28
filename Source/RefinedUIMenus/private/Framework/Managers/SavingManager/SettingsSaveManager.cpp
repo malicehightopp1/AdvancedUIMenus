@@ -74,6 +74,8 @@ void USettingsSaveManager::LoadSettings()
 	SettingsManager->SetVSyncEnabled(SettingsSaveGame->bVSyncEnabled);
 	SettingsManager->SetFrameRateLimit(SettingsSaveGame->FrameRateLimit);
 	
+	SettingsManager->CaptureSavedSettings();
+	
 	UE_LOG(LogTemp, Warning, TEXT("Music Loaded: %f"), SettingsSaveGame->MusicVolume);
 	
 	UE_LOG(LogTemp, Warning, TEXT("Saving manager called its load settings function"))

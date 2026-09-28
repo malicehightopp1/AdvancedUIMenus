@@ -13,7 +13,7 @@ enum class EInputDeviceType : uint8
 	Controller
 };
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnInputDeviceChanged, EInputDeviceType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInputDeviceChanged, EInputDeviceType, NewDeviceType);
 
 UCLASS()
 class UInputDeviceManager : public UObject

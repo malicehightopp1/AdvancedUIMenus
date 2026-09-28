@@ -23,7 +23,7 @@ void UInputPromptWidget::NativeConstruct()
 		return;
 	}
 	
-	InputDeviceManager->OnInputDeviceChanged.AddUObject(this, &UInputPromptWidget::InputDeviceChanged);
+	InputDeviceManager->OnInputDeviceChanged.AddDynamic(this, &UInputPromptWidget::InputDeviceChanged);
 	
 	CurrentDevice = InputDeviceManager->IsUsingController() ? EInputPromptDevice::Controller : EInputPromptDevice::Keyboard;
 	

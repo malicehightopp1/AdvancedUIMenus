@@ -48,7 +48,7 @@ private:
 
 	UPROPERTY() UInputDeviceManager* InputDeviceManager = nullptr;
 	
-	void InputDeviceChanged(EInputDeviceType NewInputDevice);
+	UFUNCTION() void InputDeviceChanged(EInputDeviceType NewInputDevice);
 	
 	EInputPromptDevice CurrentDevice = EInputPromptDevice::Keyboard;
 

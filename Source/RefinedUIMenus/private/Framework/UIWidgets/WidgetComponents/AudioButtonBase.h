@@ -15,15 +15,13 @@ class UAudioButtonBase : public UButton
 	GENERATED_BODY()
 	
 	UAudioButtonBase(const FObjectInitializer& ObjectInitializer);
+	
 public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")USoundBase* ClickSound;
 
 	UFUNCTION()void SetControllerFocus(bool bIsFocused);
 protected:
-	virtual void PostLoad() override;
-
-	virtual void PostInitProperties() override;
 	
 	UFUNCTION()void OnButtonHovered();
 

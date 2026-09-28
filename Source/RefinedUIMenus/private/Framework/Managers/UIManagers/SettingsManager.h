@@ -158,7 +158,7 @@ private:
 	int32 SavedResolutionWidth = 1920;
 	int32 SavedResolutionHeight = 1080;
 	
-	EWindowMode::Type SavedWindowMode = EWindowMode::Windowed;
+	EWindowMode::Type SavedWindowMode = EWindowMode::WindowedFullscreen;
 	
 	bool SavedVsyncEnabled = false;
 	

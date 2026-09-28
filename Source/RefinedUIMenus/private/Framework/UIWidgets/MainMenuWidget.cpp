@@ -6,6 +6,8 @@
 #include "Blueprint/WidgetTree.h"
 #include "Components/Button.h"
 #include "Framework/Managers/UIManagers/MainMenuManager.h"
+#include "Framework/Managers/InputManagers/InputDeviceManager.h"
+#include "Framework/Services/ServiceLocatorSubsystem.h"
 #include "WidgetComponents/AudioButtonBase.h"
 
 void UMainMenuWidget::NativeConstruct()
@@ -50,6 +52,18 @@ void UMainMenuWidget::NativeOnInitialized()
 	{
 		CreditsButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnCreditsClicked);
 	}
+	
+	UServiceLocatorSubSystem* Services = UServiceLocatorSubSystem::Get(this);
+
+	if (Services)
+	{
+		UInputDeviceManager* InputDeviceManager = Services->GetInputDeviceManager();
+
+		if (InputDeviceManager)
+		{
+			InputDeviceManager->OnInputDeviceChanged.AddDynamic(this, &UMainMenuWidget::OnInputDeviceChanged);
+		}
+	}
 }
 
 void UMainMenuWidget::OnPlayClicked()
@@ -92,10 +106,37 @@ void UMainMenuWidget::SetMainMenuManager(UMainMenuManager* NewMainMenuManager)
 
 void UMainMenuWidget::FocusStartButton()
 {
-	if (StartGameButton)
+	if (!StartGameButton)
+	{
+		return;
+	}
+
+	UServiceLocatorSubSystem* Services = UServiceLocatorSubSystem::Get(this);
+
+	if (!Services)
+	{
+		return;
+	}
+
+	UInputDeviceManager* InputDeviceManager = Services->GetInputDeviceManager();
+
+	if (!InputDeviceManager)
+	{
+		return;
+	}
+
+	if (InputDeviceManager->IsUsingController())
 	{
 		StartGameButton->SetKeyboardFocus();
-		
-		UE_LOG(LogTemp, Warning, TEXT("Start button focus"))
+
+		UE_LOG(LogTemp, Log, TEXT("General button focused because controller is being used"));
+	}
+}
+
+void UMainMenuWidget::OnInputDeviceChanged(EInputDeviceType NewDeviceType)
+{
+	if (NewDeviceType == EInputDeviceType::Controller)
+	{
+		FocusStartButton();
 	}
 }

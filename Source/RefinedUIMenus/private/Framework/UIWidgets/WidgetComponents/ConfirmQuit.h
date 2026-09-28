@@ -20,6 +20,8 @@ public:
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> QuitButtonNo;
 	UPROPERTY(meta = (BindWidget)) TObjectPtr<UAudioButtonBase> QuitButtonYes;
 	
+	UFUNCTION() void OnInputDeviceChanged(EInputDeviceType NewDeviceType);
+	
 	UFUNCTION() void OnYesClicked();
 	UFUNCTION() void OnNoClicked();
 	
